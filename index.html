@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formosinho — Taxidermia &amp; História Natural</title>
+  <meta name="description" content="Formosinho: taxidermia de autor e gabinete de história natural. Peças únicas, de origem legal documentada, montadas à mão." />
+  <meta name="theme-color" content="#EAE4D6" />
+  <meta property="og:title" content="Formosinho — Taxidermia & História Natural" />
+  <meta property="og:description" content="Do habitat à vitrine. Peças únicas, montadas à mão." />
+  <meta property="og:image" content="https://i.ytimg.com/vi/Ok_qDnM7SiU/maxresdefault.jpg" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239a2e1f'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-style='italic' font-size='44' fill='%23ebe5d7'%3EF%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+  <link rel="preconnect" href="https://i.ytimg.com" />
+  <link rel="dns-prefetch" href="https://sketchfab.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <!-- ===================== BARRA SUPERIOR ===================== -->
+  <header class="bar" data-theme="dark">
+    <a href="#topo" class="bar__brand" aria-label="Formosinho — início">
+      <span class="bar__word">Formosinho</span>
+      <span class="bar__sub">taxidermia &amp; história natural</span>
+    </a>
+    <p class="bar__now" aria-live="polite"><span class="bar__now-num">—</span><span class="bar__now-label">Prancha I · O território</span></p>
+    <button class="bar__index" aria-expanded="false" aria-controls="indice">
+      <span class="bar__index-text">Índice</span>
+      <span class="bar__index-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+  </header>
+
+  <!-- Régua lateral (progresso de leitura) -->
+  <aside class="ruler" aria-hidden="true">
+    <div class="ruler__ticks"></div>
+    <div class="ruler__mark"><span class="ruler__read">0 cm</span></div>
+  </aside>
+
+  <!-- Índice (menu) -->
+  <nav class="index" id="indice" aria-hidden="true" aria-label="Índice">
+    <div class="index__card">
+      <p class="index__head"><span>Índice</span><span>Formosinho · Catálogo geral</span></p>
+      <ol class="index__list">
+        <li><a href="#gabinete"><b>I.</b><span>O Gabinete</span><i></i><em>03</em></a></li>
+        <li><a href="#metodo"><b>II.</b><span>Método</span><i></i><em>07</em></a></li>
+        <li><a href="#catalogo"><b>III.</b><span>Catálogo de peças</span><i></i><em>15</em></a></li>
+        <li><a href="#gavetas"><b>IV.</b><span>As gavetas</span><i></i><em>29</em></a></li>
+        <li><a href="#detalhe"><b>V.</b><span>Detalhe</span><i></i><em>33</em></a></li>
+        <li><a href="#volta"><b>VI.</b><span>Em volta · 3D</span><i></i><em>37</em></a></li>
+        <li><a href="#visitas"><b>VII.</b><span>Livro de visitas</span><i></i><em>41</em></a></li>
+        <li><a href="#encomendas"><b>VIII.</b><span>Encomendas</span><i></i><em>45</em></a></li>
+      </ol>
+      <a class="index__cta" href="#encomendas">Encomende já a sua <span aria-hidden="true">→</span></a>
+      <p class="index__foot"><span>geral@formosinho.pt</span><span>+351 900 000 000</span></p>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ===================== HERO · VÍDEO DE DRONE ===================== -->
+    <section class="hero" id="topo" data-theme="dark" data-label="Prancha I · O território" data-num="—">
+      <div class="hero__sticky">
+        <div class="hero__frame">
+          <!-- Vídeo de drone (YouTube, sem som, em ciclo). O id está em js/gallery-data.js → heroVideo -->
+          <div class="hero__media" aria-hidden="true">
+            <div class="hero__yt"><div id="heroYT"></div></div>
+          </div>
+          <div class="hero__shade"></div>
+
+          <div class="hero__mark">
+            <h1 class="hero__title" aria-label="Formosinho">
+              <span class="hero__title-row">Formo</span><span class="hero__title-row hero__title-row--in">sinho</span>
+            </h1>
+            <p class="hero__phrase" aria-live="polite"><span>Do habitat à vitrine.</span></p>
+          </div>
+          <p class="hero__intro">Taxidermia de autor<br />&amp; gabinete de história natural</p>
+        </div>
+
+        <div class="plate-caption">
+          <p class="plate-caption__l"><b>Prancha I.</b> O território.</p>
+          <p class="plate-caption__r">Antes de qualquer peça, há um lugar. Estudamos o habitat de cada espécie para que nada na postura seja inventado.</p>
+        </div>
+        <p class="hero__cue" aria-hidden="true">desça para abrir o catálogo <span>↓</span></p>
+      </div>
+    </section>
+
+    <!-- ===================== I · O GABINETE ===================== -->
+    <section class="sec about" id="gabinete" data-theme="light" data-label="O Gabinete" data-num="I">
+      <header class="chapter">
+        <span class="chapter__num">I</span>
+        <h2 class="chapter__title">O Gabinete</h2>
+        <span class="chapter__meta">pp. 03—07</span>
+      </header>
+
+      <div class="about__grid">
+        <div class="about__text">
+          <p class="lead dropcap reveal">Há quase duas décadas que o atelier Formosinho devolve forma ao que a natureza já levou. Não fazemos troféus de prateleira: fazemos <em>retratos</em> — de uma coruja no segundo antes de levantar voo, de uma raposa que ouviu um ramo partir.</p>
+          <p class="reveal">Cada peça começa no campo e não na bancada. Medimos, fotografamos, observamos o habitat. Só depois se esculpe o corpo, músculo a músculo, e se monta a pele com técnicas de conservação de nível museológico.</p>
+          <p class="reveal">Trabalhamos apenas com animais de origem legal e documentada: morte natural, centros de recuperação de fauna, caça licenciada e coleções institucionais.</p>
+
+          <svg class="signature" viewBox="0 0 520 120" aria-label="Assinatura Formosinho">
+            <text x="6" y="92">Formosinho</text>
+          </svg>
+        </div>
+
+        <aside class="about__side">
+          <figure class="pinned" data-speed="-0.06">
+            <span class="tape tape--l"></span><span class="tape tape--r"></span>
+            <div class="pinned__img reveal-img"><img src="images/sobre/atelier.jpg" alt="O armário da coleção de estudo do atelier" data-ph="Fotografia do atelier" loading="lazy" decoding="async" /></div>
+            <figcaption>Fig. A — O armário da coleção de estudo.</figcaption>
+          </figure>
+
+          <ol class="notes">
+            <li class="reveal"><sup>1</sup> Nenhum animal é abatido por encomenda. Nunca.</li>
+            <li class="reveal"><sup>2</sup> Todas as peças seguem com certificado de origem e, quando aplicável, documentação CITES.</li>
+          </ol>
+        </aside>
+      </div>
+
+      <dl class="spec reveal">
+        <div><dt>Fundação</dt><dd>2008</dd></div>
+        <div><dt>Espécies trabalhadas</dt><dd>180+</dd></div>
+        <div><dt>Peças entregues</dt><dd>1 200+</dd></div>
+        <div><dt>Prazo médio</dt><dd>3—6 meses</dd></div>
+        <div><dt>Instituições parceiras</dt><dd>museus &amp; centros de fauna</dd></div>
+      </dl>
+    </section>
+
+    <!-- ===================== II · MÉTODO ===================== -->
+    <section class="sec method" id="metodo" data-theme="light" data-label="Método" data-num="II">
+      <header class="chapter">
+        <span class="chapter__num">II</span>
+        <h2 class="chapter__title">Método</h2>
+        <span class="chapter__meta">cinco tempos · pp. 07—15</span>
+      </header>
+
+      <div class="method__grid">
+        <div class="method__plate">
+          <div class="plate">
+            <div class="plate__figs" id="methodFigs"><!-- gerado --></div>
+            <p class="plate__label"><span class="plate__fig">Fig. 1</span><span class="plate__count">1 / 5</span></p>
+          </div>
+          <div class="method__rule" aria-hidden="true"><span></span></div>
+        </div>
+
+        <ol class="steps" id="methodSteps"><!-- gerado --></ol>
+      </div>
+    </section>
+
+    <!-- ===================== III · CATÁLOGO ===================== -->
+    <section class="sec catalog" id="catalogo" data-theme="light" data-label="Catálogo de peças" data-num="III">
+      <header class="chapter">
+        <span class="chapter__num">III</span>
+        <h2 class="chapter__title">Catálogo de peças</h2>
+        <span class="chapter__meta"><span id="catCount">12</span> entradas</span>
+      </header>
+
+      <div class="catalog__tools">
+        <div class="tabs" role="tablist" aria-label="Filtrar por categoria" id="catTabs"><!-- gerado --></div>
+        <div class="view-toggle" role="group" aria-label="Modo de visualização">
+          <button class="is-on" data-view="vitrine" aria-pressed="true">Vitrine</button>
+          <button data-view="indice" aria-pressed="false">Índice</button>
+        </div>
+      </div>
+
+      <div class="vitrine" id="vitrine"><!-- gerado --></div>
+
+      <div class="ledger" id="ledger" hidden>
+        <div class="ledger__head" aria-hidden="true">
+          <span>Nº</span><span>Nome comum</span><span>Nome científico</span><span>Classe</span><span>Ano</span><span>Dimensões</span>
+        </div>
+        <ul class="ledger__rows" id="ledgerRows"><!-- gerado --></ul>
+      </div>
+      <div class="ledger-preview" aria-hidden="true"><img alt="" /></div>
+    </section>
+
+    <!-- ===================== IV · GAVETAS (3D) ===================== -->
+    <section class="sec cabinet" id="gavetas" data-theme="dark" data-label="As gavetas" data-num="IV">
+      <header class="chapter">
+        <span class="chapter__num">IV</span>
+        <h2 class="chapter__title">As gavetas</h2>
+        <span class="chapter__meta">coleção de estudo</span>
+      </header>
+
+      <div class="cabinet__grid">
+        <div class="cabinet__text">
+          <p class="lead reveal">Nem tudo vai para a parede. A coleção de estudo vive em gavetas — peles, penas e esqueletos que servem de referência a cada nova peça.</p>
+          <p class="reveal cabinet__hint">Passe o cursor para entreabrir. Clique para abrir a ficha.</p>
+          <div class="cabinet__readout" aria-live="polite">
+            <span class="cabinet__readout-n">Gaveta —</span>
+            <span class="cabinet__readout-t">Escolha uma gaveta</span>
+          </div>
+        </div>
+        <div class="cabinet__stage">
+          <div class="cabinet__body" id="cabinet"><!-- gerado --></div>
+          <div class="cabinet__plinth" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== V · DETALHE (LUPA) ===================== -->
+    <section class="sec loupe-sec" id="detalhe" data-theme="dark" data-label="Detalhe" data-num="V">
+      <header class="chapter">
+        <span class="chapter__num">V</span>
+        <h2 class="chapter__title">Detalhe</h2>
+        <span class="chapter__meta">passe a lupa</span>
+      </header>
+
+      <div class="loupe-grid">
+        <figure class="specimen" id="specimen">
+          <img src="images/detalhe/detalhe.jpg" alt="Grande plano de um guarda-rios montado" data-ph="Grande plano (alta resolução)" loading="lazy" decoding="async" />
+          <div class="specimen__pins" id="pins"><!-- gerado --></div>
+          <div class="loupe" aria-hidden="true"><span class="loupe__x">×3</span></div>
+        </figure>
+        <div class="loupe-side">
+          <p class="loupe-side__lead reveal">O que separa uma peça de museu de um bicho empalhado está em detalhes que ninguém vê à primeira.</p>
+          <p class="loupe-side__fig">Fig. B — Guarda-rios, <i>Alcedo atthis</i>.<br />Passe a lupa sobre a imagem.</p>
+          <ol class="annotations" id="annotations"><!-- gerado --></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== VI · EM VOLTA (cabeça de veado 3D) ===================== -->
+    <section class="sec turn" id="volta" data-theme="light" data-label="Em volta · 3D" data-num="VI">
+      <header class="chapter">
+        <span class="chapter__num">VI</span>
+        <h2 class="chapter__title">Em volta</h2>
+        <span class="chapter__meta">360° · digitalização 3D</span>
+      </header>
+
+      <div class="turn__grid">
+        <div class="turn__text">
+          <p class="lead reveal">Uma montagem vê-se de todos os ângulos. Rode a peça como se a tivesse nas mãos.</p>
+          <ul class="turn__how reveal">
+            <li><b>Rodar</b><span>arraste com o rato ou com o dedo</span></li>
+            <li><b>Aproximar</b><span>duplo clique · pinça no ecrã</span></li>
+            <li><b>Repor</b><span>duplo clique no fundo</span></li>
+          </ul>
+          <dl class="turn__spec reveal">
+            <div><dt>Peça</dt><dd>Veado-de-cauda-branca, montagem de ombro</dd></div>
+            <div><dt>Espécie</dt><dd><i>Odocoileus virginianus</i></dd></div>
+            <div><dt>Registo</dt><dd>Digitalização 3D por fotogrametria</dd></div>
+          </dl>
+          <p class="turn__credit">Modelo 3D: <a href="https://sketchfab.com/3d-models/deer-shoulder-mount-sd-fast-sample-3d-scan-b52f0e3e6de44dbe9f80794c30cc3241" target="_blank" rel="noopener">“Deer Shoulder Mount”, 3DScanX</a> · Sketchfab</p>
+        </div>
+
+        <figure class="case" id="case3d">
+          <div class="case__glass">
+            <div class="case__view" id="turnView">
+              <img class="case__poster" src="https://media.sketchfab.com/models/b52f0e3e6de44dbe9f80794c30cc3241/thumbnails/5802f11461a04b41885db3a8ea28ab51/daae7e72a2634df5bcdede29ed75858d.jpeg" alt="Cabeça de veado montada — pré-visualização" loading="lazy" />
+              <p class="case__loading"><span></span>A preparar a peça 3D…</p>
+            </div>
+            <span class="case__shine" aria-hidden="true"></span>
+            <span class="case__edge case__edge--l" aria-hidden="true"></span>
+            <span class="case__edge case__edge--r" aria-hidden="true"></span>
+          </div>
+          <div class="case__plinth"><span class="case__plate">Nº 3D-001 · <i>Odocoileus virginianus</i></span></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===================== VII · LIVRO DE VISITAS ===================== -->
+    <section class="sec guest" id="visitas" data-theme="light" data-label="Livro de visitas" data-num="VII">
+      <header class="chapter">
+        <span class="chapter__num">VII</span>
+        <h2 class="chapter__title">Livro de visitas</h2>
+        <span class="chapter__meta">excertos</span>
+      </header>
+
+      <div class="guestbook">
+        <article class="entry reveal">
+          <time>12.III.2025</time>
+          <blockquote>“A coruja chegou numa caixa de madeira e parecia que ia sair a voar quando a abrimos. A minha mãe chorou.”</blockquote>
+          <p class="entry__sig">Marta C. <span>— encomenda particular</span></p>
+        </article>
+        <article class="entry reveal">
+          <time>04.X.2024</time>
+          <blockquote>“Rigor anatómico irrepreensível. É hoje a peça central da nossa sala de fauna ibérica.”</blockquote>
+          <p class="entry__sig">Dir. de coleções <span>— museu regional</span></p>
+        </article>
+        <article class="entry reveal">
+          <time>21.V.2024</time>
+          <blockquote>“Mandaram fotografias de cada fase. Percebi finalmente porque demora meses.”</blockquote>
+          <p class="entry__sig">Rui P. <span>— restauro de troféu</span></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================== VIII · ENCOMENDAS ===================== -->
+    <section class="sec order" id="encomendas" data-theme="light" data-label="Encomendas" data-num="VIII">
+      <header class="chapter">
+        <span class="chapter__num">VIII</span>
+        <h2 class="chapter__title">Encomendas</h2>
+        <span class="chapter__meta">resposta em 48 h</span>
+      </header>
+
+      <div class="order__grid">
+        <!-- Para receber emails: troque action="#" por um endpoint (ex.: https://formspree.io/f/SEU_ID) -->
+        <form class="slip" action="#" method="POST" novalidate>
+          <div class="slip__head">
+            <p><b>Ficha de encomenda</b><span>Atelier Formosinho</span></p>
+            <p class="slip__no">Nº <span id="slipNo">0000</span><br /><span id="slipDate">—</span></p>
+          </div>
+
+          <label class="line"><span>Nome</span><input name="nome" required autocomplete="name" /></label>
+          <label class="line"><span>Email ou telefone</span><input name="contacto" required autocomplete="email" /></label>
+          <label class="line"><span>Espécie / peça</span><input name="especie" placeholder="ex.: coruja-das-torres, cabeça de veado…" /></label>
+
+          <fieldset class="boxes">
+            <legend>Tipo de trabalho</legend>
+            <label><input type="checkbox" name="tipo" value="Montagem integral" /><i></i>Montagem integral</label>
+            <label><input type="checkbox" name="tipo" value="Busto / cabeça" /><i></i>Busto / cabeça</label>
+            <label><input type="checkbox" name="tipo" value="Restauro" /><i></i>Restauro</label>
+            <label><input type="checkbox" name="tipo" value="Diorama" /><i></i>Diorama</label>
+            <label><input type="checkbox" name="tipo" value="Réplica de peixe" /><i></i>Réplica de peixe</label>
+          </fieldset>
+
+          <label class="line line--area"><span>Notas</span><textarea name="notas" rows="3" required></textarea></label>
+
+          <div class="slip__foot">
+            <p class="slip__status" role="status" aria-live="polite"></p>
+            <button type="submit" class="stamp-btn">Carimbar &amp; enviar</button>
+          </div>
+
+          <div class="stamp" aria-hidden="true">
+            <span>Recebido</span>
+            <small id="stampDate">—</small>
+            <span class="stamp__brand">Formosinho</span>
+          </div>
+        </form>
+
+        <aside class="card-wrap">
+          <div class="card3d" data-tilt>
+            <p class="card3d__brand">Formosinho</p>
+            <p class="card3d__sub">taxidermia &amp; história natural</p>
+            <dl>
+              <dt>Atelier</dt><dd>Rua Exemplo, 123<br />0000-000 Cidade, Portugal</dd>
+              <dt>Email</dt><dd><a href="mailto:geral@formosinho.pt">geral@formosinho.pt</a></dd>
+              <dt>Tel.</dt><dd><a href="tel:+351900000000">+351 900 000 000</a></dd>
+              <dt>Visitas</dt><dd>só por marcação</dd>
+            </dl>
+          </div>
+          <p class="card-note">Recolhemos peças em todo o país. Para animais recém-falecidos: congele-os inteiros, num saco fechado, e contacte-nos.</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== COLOFÃO ===================== -->
+  <footer class="colophon" data-theme="dark" data-label="Colofão" data-num="—">
+    <p class="colophon__word" aria-hidden="true">Formosinho</p>
+    <div class="colophon__grid">
+      <p><b>Formosinho</b><br />Taxidermia &amp; história natural<br />© <span id="year"></span></p>
+      <p>Composto em Cormorant Garamond,<br />Manrope &amp; IBM Plex Mono.</p>
+      <p>Todas as peças com origem<br />legal documentada.</p>
+      <details class="credits">
+        <summary>Créditos das imagens</summary>
+        <ul id="credits"><!-- gerado --></ul>
+      </details>
+    </div>
+  </footer>
+
+  <!-- ===================== FICHA (LIGHTBOX) ===================== -->
+  <div class="record" role="dialog" aria-modal="true" aria-label="Ficha de catálogo" aria-hidden="true">
+    <div class="record__card">
+      <div class="record__img"><img alt="" /></div>
+      <div class="record__body">
+        <p class="record__top"><span>Ficha de catálogo</span><span class="record__no">Nº —</span></p>
+        <h3 class="record__title">—</h3>
+        <p class="record__sci">—</p>
+        <dl class="record__fields"></dl>
+        <p class="record__desc"></p>
+        <p class="record__credit"></p>
+        <div class="record__stamp" aria-hidden="true">Coleção<br />Formosinho</div>
+      </div>
+      <div class="record__nav">
+        <button class="record__prev">← anterior</button>
+        <button class="record__close">fechar ✕</button>
+        <button class="record__next">seguinte →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BARRA DE PROMOÇÕES (computador) + BOTÃO (telemóvel) ===================== -->
+  <!-- Conteúdo em js/gallery-data.js → promo. Para desligar: active: false -->
+  <aside class="promo" aria-label="Promoção" hidden>
+    <a class="promo__link" href="#encomendas">
+      <span class="promo__tag"></span>
+      <span class="promo__marquee"><span class="promo__track"></span></span>
+    </a>
+    <button class="promo__close" type="button" aria-label="Fechar promoção">✕</button>
+  </aside>
+  <a class="cta-mobile" href="#encomendas"><span>Encomende já a sua</span><i aria-hidden="true">→</i></a>
+
+  <script src="js/gallery-data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

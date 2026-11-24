@@ -1,0 +1,29 @@
+FORMOSINHO — GUIA DE IMAGENS E VÍDEO
+=====================================
+
+As imagens atuais são PROVISÓRIAS: fotografias com licença livre (CC0 / domínio
+público / CC BY) tiradas do Openverse. Servem para mostrar o design ao cliente.
+Antes de publicar, substitua-as por fotografias das peças reais do Formosinho.
+(Mostrar peças de outros autores como se fossem do atelier seria enganador.)
+Os créditos das imagens CC BY aparecem automaticamente no rodapé e em cada ficha.
+Quando trocar uma imagem, atualize ou remova o campo "credit" correspondente.
+
+VÍDEO DO TOPO (drone)
+  O vídeo é reproduzido a partir do YouTube (leitor oficial, sem som, em ciclo).
+  Para trocar de vídeo, mude o id em js/gallery-data.js → heroVideo.youtube
+  (o id é o que vem depois de "watch?v=" no endereço do YouTube).
+  images/hero/poster.jpg        imagem de reserva, se o YouTube estiver bloqueado
+  Se o cliente tiver o seu próprio vídeo (ou autorização do autor), pode ser
+  alojado diretamente no site — peça para adaptar.
+
+ONDE ESTÁ CADA IMAGEM
+  images/hero/poster.jpg        capa do topo
+  images/sobre/atelier.jpg      fotografia "pregada" na secção I (vertical 4:5)
+  images/processo/01..05.jpg    as 5 figuras do Método (vertical)
+  images/galeria/*.jpg          peças do Catálogo
+  images/gavetas/*.jpg          interior das gavetas (coleção de estudo)
+  images/detalhe/detalhe.jpg    grande plano para a lupa — use ALTA RESOLUÇÃO
+                                (2000 px ou mais), senão a lupa fica desfocada
+
+TEXTOS, PEÇAS, GAVETAS E PONTOS DA LUPA
+  Tudo se edita em  js/gallery-data.js  (está comentado).
