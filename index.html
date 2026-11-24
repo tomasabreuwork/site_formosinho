@@ -30,7 +30,7 @@
       <span class="bar__word">Formosinho</span>
       <span class="bar__sub">taxidermia &amp; história natural</span>
     </a>
-    <p class="bar__now" aria-live="polite"><span class="bar__now-num">—</span><span class="bar__now-label">Formosinho</span></p>
+    <p class="bar__now" aria-live="polite"><span class="bar__now-label">Formosinho</span></p>
     <button class="bar__index" aria-expanded="false" aria-controls="indice">
       <span class="bar__index-text">Índice</span>
       <span class="bar__index-icon" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -38,7 +38,7 @@
   </header>
 
   <!-- Régua lateral (progresso de leitura) -->
-  <aside class="ruler" aria-hidden="true">
+  <aside class="ruler in-hero" aria-hidden="true">
     <div class="ruler__ticks"></div>
     <div class="ruler__mark"><span class="ruler__read">0 cm</span></div>
   </aside>
@@ -47,16 +47,16 @@
   <nav class="index" id="indice" aria-hidden="true" aria-label="Índice">
     <div class="index__card">
       <p class="index__head"><span>Índice</span><span>Formosinho · Catálogo geral</span></p>
-      <ol class="index__list">
-        <li><a href="#gabinete"><b>I.</b><span>O Gabinete</span><i></i><em>03</em></a></li>
-        <li><a href="#metodo"><b>II.</b><span>Método</span><i></i><em>07</em></a></li>
-        <li><a href="#catalogo"><b>III.</b><span>Catálogo de peças</span><i></i><em>15</em></a></li>
-        <li><a href="#gavetas"><b>IV.</b><span>As gavetas</span><i></i><em>29</em></a></li>
-        <li><a href="#detalhe"><b>V.</b><span>Detalhe</span><i></i><em>33</em></a></li>
-        <li><a href="#volta"><b>VI.</b><span>Em volta · 3D</span><i></i><em>37</em></a></li>
-        <li><a href="#visitas"><b>VII.</b><span>Livro de visitas</span><i></i><em>41</em></a></li>
-        <li><a href="#encomendas"><b>VIII.</b><span>Encomendas</span><i></i><em>45</em></a></li>
-      </ol>
+      <ul class="index__list">
+        <li><a href="#gabinete"><span>O Gabinete</span></a></li>
+        <li><a href="#metodo"><span>Método</span></a></li>
+        <li><a href="#catalogo"><span>Catálogo de peças</span></a></li>
+        <li><a href="#gavetas"><span>As gavetas</span></a></li>
+        <li><a href="#detalhe"><span>Detalhe</span></a></li>
+        <li><a href="#volta"><span>Em volta · 3D</span></a></li>
+        <li><a href="#visitas"><span>Livro de visitas</span></a></li>
+        <li><a href="#encomendas"><span>Encomendas</span></a></li>
+      </ul>
       <a class="index__cta" href="#encomendas">Encomende já a sua <span aria-hidden="true">→</span></a>
       <p class="index__foot"><span>geral@formosinho.pt</span><span>+351 900 000 000</span></p>
     </div>
@@ -87,9 +87,8 @@
     <!-- ===================== I · O GABINETE ===================== -->
     <section class="sec about" id="gabinete" data-theme="light" data-label="O Gabinete" data-num="I">
       <header class="chapter">
-        <span class="chapter__num">I</span>
         <h2 class="chapter__title">O Gabinete</h2>
-        <span class="chapter__meta">pp. 03—07</span>
+        <span class="chapter__meta">desde 2008</span>
       </header>
 
       <div class="about__grid">
@@ -107,13 +106,13 @@
           <figure class="pinned" data-speed="-0.06">
             <span class="tape tape--l"></span><span class="tape tape--r"></span>
             <div class="pinned__img reveal-img"><img src="images/sobre/atelier.jpg" alt="O armário da coleção de estudo do atelier" data-ph="Fotografia do atelier" loading="lazy" decoding="async" /></div>
-            <figcaption>Fig. A — O armário da coleção de estudo.</figcaption>
+            <figcaption>O armário da coleção de estudo.</figcaption>
           </figure>
 
-          <ol class="notes">
-            <li class="reveal"><sup>1</sup> Nenhum animal é abatido por encomenda. Nunca.</li>
-            <li class="reveal"><sup>2</sup> Todas as peças seguem com certificado de origem e, quando aplicável, documentação CITES.</li>
-          </ol>
+          <ul class="notes">
+            <li class="reveal">Nenhum animal é abatido por encomenda. Nunca.</li>
+            <li class="reveal">Todas as peças seguem com certificado de origem e, quando aplicável, documentação CITES.</li>
+          </ul>
         </aside>
       </div>
 
@@ -129,16 +128,15 @@
     <!-- ===================== II · MÉTODO ===================== -->
     <section class="sec method" id="metodo" data-theme="light" data-label="Método" data-num="II">
       <header class="chapter">
-        <span class="chapter__num">II</span>
         <h2 class="chapter__title">Método</h2>
-        <span class="chapter__meta">cinco tempos · pp. 07—15</span>
+        <span class="chapter__meta">do campo à vitrine</span>
       </header>
 
       <div class="method__grid">
         <div class="method__plate">
           <div class="plate">
             <div class="plate__figs" id="methodFigs"><!-- gerado --></div>
-            <p class="plate__label"><span class="plate__fig">Fig. 1</span><span class="plate__count">1 / 5</span></p>
+            <p class="plate__label"><span class="plate__fig"></span></p>
           </div>
           <div class="method__rule" aria-hidden="true"><span></span></div>
         </div>
@@ -150,7 +148,6 @@
     <!-- ===================== III · CATÁLOGO ===================== -->
     <section class="sec catalog" id="catalogo" data-theme="light" data-label="Catálogo de peças" data-num="III">
       <header class="chapter">
-        <span class="chapter__num">III</span>
         <h2 class="chapter__title">Catálogo de peças</h2>
         <span class="chapter__meta"><span id="catCount">12</span> entradas</span>
       </header>
@@ -177,7 +174,6 @@
     <!-- ===================== IV · GAVETAS (3D) ===================== -->
     <section class="sec cabinet" id="gavetas" data-theme="dark" data-label="As gavetas" data-num="IV">
       <header class="chapter">
-        <span class="chapter__num">IV</span>
         <h2 class="chapter__title">As gavetas</h2>
         <span class="chapter__meta">coleção de estudo</span>
       </header>
@@ -201,7 +197,6 @@
     <!-- ===================== V · DETALHE (LUPA) ===================== -->
     <section class="sec loupe-sec" id="detalhe" data-theme="dark" data-label="Detalhe" data-num="V">
       <header class="chapter">
-        <span class="chapter__num">V</span>
         <h2 class="chapter__title">Detalhe</h2>
         <span class="chapter__meta">passe a lupa</span>
       </header>
@@ -214,7 +209,7 @@
         </figure>
         <div class="loupe-side">
           <p class="loupe-side__lead reveal">O que separa uma peça de museu de um bicho empalhado está em detalhes que ninguém vê à primeira.</p>
-          <p class="loupe-side__fig">Fig. B — Guarda-rios, <i>Alcedo atthis</i>.<br />Passe a lupa sobre a imagem.</p>
+          <p class="loupe-side__fig">Guarda-rios, <i>Alcedo atthis</i>.<br />Passe a lupa sobre a imagem.</p>
           <ol class="annotations" id="annotations"><!-- gerado --></ol>
         </div>
       </div>
@@ -223,7 +218,6 @@
     <!-- ===================== VI · EM VOLTA (cabeça de veado 3D) ===================== -->
     <section class="sec turn" id="volta" data-theme="light" data-label="Em volta · 3D" data-num="VI">
       <header class="chapter">
-        <span class="chapter__num">VI</span>
         <h2 class="chapter__title">Em volta</h2>
         <span class="chapter__meta">360° · digitalização 3D</span>
       </header>
@@ -249,16 +243,15 @@
             <div class="case__view" id="turnView">
               <img class="case__poster" src="" alt="" />
               <iframe id="turnFrame" title="Peça em 3D" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
-              <!-- bloqueiam os botões do visualizador: só é possível rodar/aproximar a peça -->
-              <span class="case__shield case__shield--top" aria-hidden="true"></span>
-              <span class="case__shield case__shield--bottom" aria-hidden="true"></span>
               <p class="case__loading"><span></span>A preparar a peça 3D…</p>
             </div>
-            <span class="case__shine" aria-hidden="true"></span>
-            <span class="case__edge case__edge--l" aria-hidden="true"></span>
-            <span class="case__edge case__edge--r" aria-hidden="true"></span>
+            <!-- moldura (passe-partout) da cor da secção: tapa os botões do visualizador -->
+            <span class="case__mat case__mat--top"><em>Arraste para rodar · toque nos pontos para saber mais</em></span>
+            <span class="case__mat case__mat--left" aria-hidden="true"></span>
+            <span class="case__mat case__mat--right" aria-hidden="true"></span>
+            <span class="case__mat case__mat--bottom"><span class="case__plate" id="turnPlate"></span></span>
+            <span class="case__window" aria-hidden="true"></span>
           </div>
-          <div class="case__plinth"><span class="case__plate" id="turnPlate">Nº 3D-001</span></div>
         </figure>
       </div>
     </section>
@@ -266,7 +259,6 @@
     <!-- ===================== VII · LIVRO DE VISITAS ===================== -->
     <section class="sec guest" id="visitas" data-theme="light" data-label="Livro de visitas" data-num="VII">
       <header class="chapter">
-        <span class="chapter__num">VII</span>
         <h2 class="chapter__title">Livro de visitas</h2>
         <span class="chapter__meta">excertos</span>
       </header>
@@ -293,7 +285,6 @@
     <!-- ===================== VIII · ENCOMENDAS ===================== -->
     <section class="sec order" id="encomendas" data-theme="light" data-label="Encomendas" data-num="VIII">
       <header class="chapter">
-        <span class="chapter__num">VIII</span>
         <h2 class="chapter__title">Encomendas</h2>
         <span class="chapter__meta">resposta em 48 h</span>
       </header>

@@ -47,12 +47,15 @@
 
   /* Vídeo de drone a partir do YouTube (leitor oficial, sem som).
      O vídeo continua alojado no YouTube — não é copiado para o site.
-     Sem "loop/playlist" do YouTube (é isso que mostra os botões ⏮ ▶ ⏭): o ciclo é feito aqui,
-     cortando o início e o fim. Sempre que o leitor não está a reproduzir, fica invisível. */
+     Regras para NUNCA se verem os controlos do YouTube (play, ⏮ ⏭, título…):
+       1) sem "loop/playlist" do YouTube — o ciclo é feito aqui;
+       2) o leitor só é visível enquanto está mesmo a reproduzir e o tempo a avançar;
+          em qualquer outro estado desaparece de imediato (sem transição);
+       3) no fim de cada volta o vídeo desvanece primeiro e só depois salta para o início. */
   const HV = D.heroVideo || {};
   const YT_ID = HV.youtube || "";
-  const T0 = HV.trimStart ?? 1, T1 = HV.trimEnd ?? 10;
-  let ytPlayer = null, ytReady = false, ytWanted = true, ytSeekAt = 0, ytBufTimer = 0;
+  const T0 = HV.trimStart ?? 10, T1 = HV.trimEnd ?? 10;
+  let ytPlayer = null, ytReady = false, ytWanted = true, ytLooping = false, ytLastT = -1, ytStill = 0, ytGoodSince = 0;
   if (YT_ID) heroMedia.style.setProperty("--poster", `url("https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg")`);
   const showVideo = (on) => heroFrame.classList.toggle("has-video", on);
   (function setupYouTube() {
@@ -66,39 +69,53 @@
         events: {
           onReady: (e) => { ytReady = true; e.target.mute(); e.target.playVideo(); },
           onStateChange: (e) => {
-            const S = YT.PlayerState;
-            clearTimeout(ytBufTimer);
-            if (e.data === S.PLAYING) { setTimeout(() => { if (ytPlayer.getPlayerState() === S.PLAYING) showVideo(true); }, 350); return; }
-            if (e.data === S.BUFFERING) {
-              // logo a seguir a um corte do ciclo, o buffering é curto: mantém visível
-              if (Date.now() - ytSeekAt > 1500) ytBufTimer = setTimeout(() => showVideo(false), 600);
-              return;
+            if (e.data !== YT.PlayerState.PLAYING) { showVideo(false); ytGoodSince = 0; }
+            if ((e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED || e.data === YT.PlayerState.CUED) && ytWanted && !document.hidden) {
+              setTimeout(() => { if (ytWanted) ytPlayer.playVideo(); }, 200);
             }
-            // pausado / terminado / por iniciar → esconde (nunca se veem os controlos) e retoma
-            showVideo(false);
-            if (ytWanted && !document.hidden) setTimeout(() => { ytPlayer.seekTo(T0, true); ytPlayer.playVideo(); }, 250);
           },
           onError: () => showVideo(false),
         },
       });
-      // ciclo: corta o 1.º segundo e os últimos 10
+      // vigia 5×/s: estado, tempo a avançar e ciclo com corte do início e do fim
       setInterval(() => {
-        if (!ytReady || !ytPlayer.getDuration) return;
-        const d = ytPlayer.getDuration(), c = ytPlayer.getCurrentTime();
-        if (d && c >= d - T1) { ytSeekAt = Date.now(); ytPlayer.seekTo(T0, true); }
-        else if (c > 0 && c < T0 - 0.05) { ytSeekAt = Date.now(); ytPlayer.seekTo(T0, true); }
-      }, 250);
+        if (!ytReady || !ytPlayer.getPlayerState) return;
+        const st = ytPlayer.getPlayerState(), d = ytPlayer.getDuration(), c = ytPlayer.getCurrentTime();
+        const advancing = c !== ytLastT; ytLastT = c;
+        ytStill = advancing ? 0 : ytStill + 1;
+        const playing = st === YT.PlayerState.PLAYING && ytStill < 2 && c >= T0 - 0.5;
+        if (!playing) { showVideo(false); ytGoodSince = 0; }
+        else if (!ytLooping) {
+          ytGoodSince = ytGoodSince || Date.now();
+          if (Date.now() - ytGoodSince > 400) showVideo(true); // só aparece depois de estabilizar
+        }
+        // fim da volta: desvanece, salta para o início com o vídeo invisível, volta a aparecer
+        if (d && !ytLooping && c >= d - T1 - 0.8) {
+          ytLooping = true;
+          heroFrame.classList.add("yt-dip");
+          setTimeout(() => {
+            showVideo(false); heroFrame.classList.remove("yt-dip");
+            ytPlayer.seekTo(T0, true); ytGoodSince = 0;
+            setTimeout(() => { ytLooping = false; }, 600);
+          }, 700);
+        }
+        if (c > 0 && c < T0 - 1 && !ytLooping) ytPlayer.seekTo(T0, true);
+        if (ytWanted && !document.hidden && (st === YT.PlayerState.PAUSED || st === YT.PlayerState.CUED)) ytPlayer.playVideo();
+      }, 200);
     };
     const s = document.createElement("script");
     s.src = "https://www.youtube.com/iframe_api"; s.async = true;
     document.head.appendChild(s);
-    // poupar recursos: pausa quando o hero sai do ecrã
+    // poupar recursos: pausa quando o hero sai do ecrã (o leitor fica escondido)
     new IntersectionObserver(([e]) => {
       ytWanted = e.isIntersecting;
       if (!ytReady) return;
-      e.isIntersecting ? ytPlayer.playVideo() : ytPlayer.pauseVideo();
+      if (e.isIntersecting) ytPlayer.playVideo(); else { showVideo(false); ytPlayer.pauseVideo(); }
     }).observe(hero);
-    document.addEventListener("visibilitychange", () => { if (ytReady && !document.hidden && ytWanted) ytPlayer.playVideo(); });
+    document.addEventListener("visibilitychange", () => {
+      if (!ytReady) return;
+      if (document.hidden) showVideo(false); else if (ytWanted) ytPlayer.playVideo();
+    });
   })();
 
   // título letra a letra
@@ -141,7 +158,7 @@
     heroE = e;
     if (r.bottom < 0) return;
     const small = vw < 820;
-    const rail = small ? 0 : 44;
+    const rail = 0; // sem régua durante o hero
     // o vídeo recolhe-se numa moldura de papel, com margens iguais
     const it = e * (small ? 64 : Math.max(84, vh * 0.12));
     const ib = e * (small ? 64 : Math.max(70, vh * 0.1));
@@ -159,7 +176,7 @@
   /* =====================================================================
      BARRA, ÍNDICE E RÉGUA
      ===================================================================== */
-  const bar = $(".bar"), nowNum = $(".bar__now-num"), nowLabel = $(".bar__now-label");
+  const bar = $(".bar"), nowLabel = $(".bar__now-label");
   const sections = $$("[data-label]");
   let curLabel = "", promoReady = false;
   const themeAt = (y) => {
@@ -187,7 +204,7 @@
       const r = s.getBoundingClientRect();
       if (r.top <= y && r.bottom > y) {
         const lbl = s.dataset.label;
-        if (lbl !== curLabel) { curLabel = lbl; nowNum.textContent = s.dataset.num; nowLabel.textContent = lbl; }
+        if (lbl !== curLabel) { curLabel = lbl; nowLabel.textContent = lbl; }
         break;
       }
     }
@@ -223,6 +240,7 @@
     mark.style.transform = `translateY(${14 + p * (vh - 28)}px)`;
     read.textContent = (p * CM).toFixed(1).replace(".", ",") + " cm";
     ruler.classList.toggle("is-dark", themeAt(vh * 0.5) === "dark");
+    ruler.classList.toggle("in-hero", hero.getBoundingClientRect().bottom >= vh - 2);
   }
 
   /* =====================================================================
@@ -253,32 +271,30 @@
   STEPS.forEach((s, i) => {
     const fig = document.createElement("div");
     fig.className = "plate__fig-img" + (i === 0 ? " is-on" : "");
-    fig.innerHTML = `<img src="${esc(s.src)}" alt="${esc(s.title)}" loading="lazy" data-ph="Fig. ${i + 1} · ${esc(s.title)}">`;
+    fig.innerHTML = `<img src="${esc(s.src)}" alt="${esc(s.title)}" loading="lazy" data-ph="${esc(s.title)}">`;
     figsBox.appendChild(fig);
 
     const li = document.createElement("li");
     li.className = "step" + (i === 0 ? " is-active" : "");
     li.dataset.i = i;
     li.innerHTML = `
-      <div class="step__mobile-img"><img src="${esc(s.src)}" alt="" loading="lazy" data-ph="Fig. ${i + 1}"></div>
-      <span class="step__n">Fig. ${i + 1} — ${ROMAN[i]}</span>
+      <div class="step__mobile-img"><img src="${esc(s.src)}" alt="" loading="lazy" data-ph="${esc(s.title)}"></div>
       <h3>${esc(s.title)}</h3>
       <p>${esc(s.text)}</p>
       <p class="step__time">${esc(s.time || "")}</p>`;
     stepsBox.appendChild(li);
   });
   const figs = $$(".plate__fig-img"), steps = $$(".step");
-  const figLabel = $(".plate__fig"), figCount = $(".plate__count"), methodRule = $(".method__rule span"), methodSec = $("#metodo");
+  const figLabel = $(".plate__fig"), methodRule = $(".method__rule span"), methodSec = $("#metodo");
   let curStep = 0;
   const setStep = (i) => {
     if (i === curStep) return;
     figs.forEach((f, k) => { f.classList.remove("was-on"); if (k === curStep) f.classList.add("was-on"); f.classList.toggle("is-on", k === i); });
     steps.forEach((s, k) => s.classList.toggle("is-active", k === i));
-    figLabel.textContent = `Fig. ${i + 1} — ${STEPS[i].title}`;
-    figCount.textContent = `${i + 1} / ${STEPS.length}`;
+    figLabel.textContent = STEPS[i].title;
     curStep = i;
   };
-  if (STEPS.length) { figLabel.textContent = `Fig. 1 — ${STEPS[0].title}`; figCount.textContent = `1 / ${STEPS.length}`; }
+  if (STEPS.length) figLabel.textContent = STEPS[0].title;
   const stepIO = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) setStep(+e.target.dataset.i); }), { rootMargin: "-48% 0px -48% 0px" });
   steps.forEach((s) => stepIO.observe(s));
   function updateMethod() {
@@ -421,7 +437,7 @@
   const readN = $(".cabinet__readout-n"), readT = $(".cabinet__readout-t");
   const drawerRecord = (d, i) => ({
     no: `GAV-${String(i + 1).padStart(2, "0")}`, title: d.title, sci: d.sci, src: d.src,
-    fields: [["Gaveta", `${String(i + 1).padStart(2, "0")} · ${d.label}`], ["Conteúdo", d.count], ["Uso", "Coleção de estudo · referência"]],
+    fields: [["Gaveta", d.label], ["Conteúdo", d.count], ["Uso", "Coleção de estudo · referência"]],
     desc: d.desc, credit: d.credit,
   });
   DRAWERS.forEach((d, i) => {
@@ -432,7 +448,7 @@
       <div class="drawer__top"><img src="${esc(d.src)}" alt="" loading="lazy" data-ph="${esc(d.title)}"></div>
       <div class="drawer__side drawer__side--l"></div><div class="drawer__side drawer__side--r"></div>
       <div class="drawer__front"><span class="drawer__label">${esc(d.label)}</span><span class="drawer__pull"></span></div>`;
-    const show = () => { readN.textContent = `Gaveta ${String(i + 1).padStart(2, "0")} · ${d.label}`; readT.textContent = d.title; };
+    const show = () => { readN.textContent = `Gaveta · ${d.label}`; readT.textContent = d.title; };
     el.addEventListener("pointerenter", show); el.addEventListener("focus", show);
     const open = () => openRecord(DRAWERS.map(drawerRecord), i);
     el.addEventListener("click", open);
@@ -454,11 +470,11 @@
   const Z = 3, LR = 115;
   PINS.forEach((p, i) => {
     const pin = document.createElement("span");
-    pin.className = "pin"; pin.textContent = i + 1;
+    pin.className = "pin";
     pin.style.left = p.x + "%"; pin.style.top = p.y + "%";
     pinsBox.appendChild(pin);
     const li = document.createElement("li");
-    li.innerHTML = `<b>${String(i + 1).padStart(2, "0")} — ${esc(p.title)}</b><span>${esc(p.text)}</span>`;
+    li.innerHTML = `<b>${esc(p.title)}</b><span>${esc(p.text)}</span>`;
     annBox.appendChild(li);
   });
   const pinEls = $$(".pin"), annEls = $$("#annotations li");
@@ -650,7 +666,7 @@
     MODELS.forEach((m, i) => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "turn__opt"; b.setAttribute("role", "tab");
-      b.innerHTML = `<b>${String(i + 1).padStart(2, "0")}</b>${esc(m.name)}`;
+      b.textContent = m.name;
       b.addEventListener("click", () => show(i));
       menu.appendChild(b);
     });
@@ -663,7 +679,7 @@
       spec.querySelector('[data-f="sci"]').innerHTML = `<i>${esc(m.sci)}</i>`;
       spec.querySelector('[data-f="mount"]').textContent = m.mount || "—";
       credit.innerHTML = `Modelo 3D: <a href="${esc(m.url)}" target="_blank" rel="noopener">${esc(m.author)}</a> · Sketchfab`;
-      plate.innerHTML = `Nº 3D-${String(i + 1).padStart(3, "0")} · <i>${esc(m.sci)}</i>`;
+      plate.innerHTML = `<i>${esc(m.sci)}</i>`;
       poster.src = m.poster; poster.alt = `${m.name} — pré-visualização`;
       frameEl.title = `${m.name} em 3D`;
     }
@@ -680,9 +696,32 @@
         ui_ar_help: 0, ui_ar_qrcode: 0, ui_fullscreen: 0, ui_annotations: 0, ui_hint: 2, ui_watermark: 0, ui_watermark_link: 0,
         success: (api) => {
           api.start();
-          api.addEventListener("viewerready", () => { if (my === token) caseEl.classList.add("is-live"); });
+          api.addEventListener("viewerready", () => {
+            if (my !== token) return;
+            caseEl.classList.add("is-live");
+            addNotes(api, MODELS[i].notes || []);
+          });
         },
         error: () => { if (my === token) caseEl.classList.remove("is-live"); },
+      });
+    }
+
+    // pontos de informação em português (substituem os do autor do modelo)
+    function addNotes(api, notes) {
+      if (!notes.length) return;
+      api.getCameraLookAt((err, cam) => {
+        if (err || !cam) return;
+        const dir = cam.position.map((v, k) => v - cam.target[k]);
+        const next = (k) => {
+          if (k >= notes.length) return;
+          const n = notes[k], p = n.p;
+          const eye = p.map((v, j) => v + dir[j] * 0.5); // aproxima a câmara ao ponto, com o mesmo ângulo
+          api.createAnnotationFromWorldPosition(p, eye, p, n.t, n.d, () => next(k + 1));
+        };
+        let started = false;
+        const go = () => { if (!started) { started = true; next(0); } };
+        try { api.removeAllAnnotations(go); } catch (e) { /* sem anotações */ }
+        setTimeout(go, 600); // salvaguarda se a função não devolver resposta
       });
     }
 

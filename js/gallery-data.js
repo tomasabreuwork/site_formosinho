@@ -24,7 +24,7 @@ window.FORMOSINHO = {
      ----------------------------------------------------------------------- */
   heroVideo: {
     youtube: "Ok_qDnM7SiU",
-    trimStart: 1,
+    trimStart: 10,
     trimEnd: 10,
     credit: { author: "Hugo Carrilho — “Mertola | Drone 4k”", license: "", version: "", url: "https://www.youtube.com/watch?v=Ok_qDnM7SiU" }
   },
@@ -61,42 +61,90 @@ window.FORMOSINHO = {
      ----------------------------------------------------------------------- */
   turn3d: {
     autospin: 0.18,
+    /* notes: pontos de informação na peça (p = posição 3D na superfície do modelo) */
     models: [
       { name: "Veado", sci: "Odocoileus virginianus", mount: "Montagem de ombro",
         uid: "b52f0e3e6de44dbe9f80794c30cc3241", author: "3DScanX",
         url: "https://sketchfab.com/3d-models/deer-shoulder-mount-sd-fast-sample-3d-scan-b52f0e3e6de44dbe9f80794c30cc3241",
-        poster: "https://media.sketchfab.com/models/b52f0e3e6de44dbe9f80794c30cc3241/thumbnails/5802f11461a04b41885db3a8ea28ab51/daae7e72a2634df5bcdede29ed75858d.jpeg" },
+        poster: "https://media.sketchfab.com/models/b52f0e3e6de44dbe9f80794c30cc3241/thumbnails/5802f11461a04b41885db3a8ea28ab51/daae7e72a2634df5bcdede29ed75858d.jpeg",
+        notes: [
+          { t: "Olho de vidro", d: "Olhos de vidro pintados à mão. A pálpebra é esculpida à volta para dar ao olhar um ar atento.", p: [0.16598, 0.23294, 0.35417] },
+          { t: "Armação", d: "A armação é a do próprio animal: limpa, seca e selada. O número de pontas ajuda a classificar o troféu.", p: [0.3136, 0.27214, 0.5033] },
+          { t: "Focinho", d: "A pele nua do focinho perde a cor ao secar. É repintada com pigmento e verniz para parecer húmida.", p: [0.22228, 0.37928, 0.29071] },
+          { t: "Orelhas", d: "As cartilagens são substituídas por moldes finos, para que as orelhas não encolham com o tempo.", p: [0.15589, 0.12147, 0.4208] }
+        ] },
       { name: "Javali", sci: "Sus scrofa", mount: "Cabeça em escudo de madeira",
         uid: "b91670a9cb4c43f3a393090fcd64b496", author: "Austin Beaulier",
         url: "https://sketchfab.com/3d-models/boar-head-photogrammetry-b91670a9cb4c43f3a393090fcd64b496",
-        poster: "https://media.sketchfab.com/models/b91670a9cb4c43f3a393090fcd64b496/thumbnails/1ed05f7b333b4c68970115193de42b79/6938356dd3354bb98723b2f533b0b29c.jpeg" },
+        poster: "https://media.sketchfab.com/models/b91670a9cb4c43f3a393090fcd64b496/thumbnails/1ed05f7b333b4c68970115193de42b79/6938356dd3354bb98723b2f533b0b29c.jpeg",
+        notes: [
+          { t: "Colmilhos", d: "São os originais. No macho crescem toda a vida e afiam-se uns contra os outros.", p: [-5.50689, -4.2939, 11.84571] },
+          { t: "Fuçador", d: "O disco do focinho é reesculpido e pintado: é a zona que mais denuncia uma montagem apressada.", p: [-6.68235, -7.14083, 14.36536] },
+          { t: "Escudo", d: "Base em madeira com o perfil clássico dos troféus de caça, feita à medida do pescoço.", p: [9.15425, -0.83642, 16.45292] },
+          { t: "Olhar", d: "Olhos pequenos e escuros, colocados ligeiramente para trás, como no animal vivo.", p: [-1.93495, -4.54934, 16.76407] }
+        ] },
       { name: "Lobo-ibérico", sci: "Canis lupus signatus", mount: "Corpo inteiro · peça de museu",
         uid: "5a667b8ae1874ed19b007c1fe9c1d43b", author: "Museo [UV] Historia Natural",
         url: "https://sketchfab.com/3d-models/iberian-wolf-taxidermy-canis-lupus-signatus-5a667b8ae1874ed19b007c1fe9c1d43b",
-        poster: "https://media.sketchfab.com/models/5a667b8ae1874ed19b007c1fe9c1d43b/thumbnails/1c0e2a818a7a466ea1281c00204764ae/72b4f65b014047c6aba7a733cf97e9d3.jpeg" },
+        poster: "https://media.sketchfab.com/models/5a667b8ae1874ed19b007c1fe9c1d43b/thumbnails/1c0e2a818a7a466ea1281c00204764ae/72b4f65b014047c6aba7a733cf97e9d3.jpeg",
+        notes: [
+          { t: "Boca em ameaça", d: "Dentes originais; gengivas e língua esculpidas em resina e pintadas à mão.", p: [-1.62159, 6.94487, -0.08869] },
+          { t: "Olhos âmbar", d: "A cor âmbar é típica do lobo. O vidro é escolhido pela tonalidade exata.", p: [-1.42659, 6.88144, 0.2695] },
+          { t: "Marcas no dorso", d: "As manchas escuras no dorso e nas patas da frente identificam o lobo-ibérico — daí o nome signatus.", p: [-0.36722, 7.82295, 0.35059] },
+          { t: "Espécie protegida", d: "Em Portugal o lobo-ibérico é protegido por lei. Esta peça pertence a uma coleção de museu.", p: [-0.20127, 6.69756, -1.73619] }
+        ] },
       { name: "Coruja-das-torres", sci: "Tyto alba", mount: "Corpo inteiro sobre base",
         uid: "608a7502cf2643d9ab4c89294199a8d1", author: "The Watt Institution",
         url: "https://sketchfab.com/3d-models/barn-owl-tyto-alba-608a7502cf2643d9ab4c89294199a8d1",
-        poster: "https://media.sketchfab.com/models/608a7502cf2643d9ab4c89294199a8d1/thumbnails/efd0abde135b41c4aaf42dfc17f39c72/359c681d3e6a4b81814fe7fe42256555.jpeg" },
+        poster: "https://media.sketchfab.com/models/608a7502cf2643d9ab4c89294199a8d1/thumbnails/efd0abde135b41c4aaf42dfc17f39c72/359c681d3e6a4b81814fe7fe42256555.jpeg",
+        notes: [
+          { t: "Disco facial", d: "O disco em forma de coração encaminha o som para os ouvidos: caça quase às escuras.", p: [0.5206, 1.97669, 6.36518] },
+          { t: "Voo silencioso", d: "As penas têm a orla macia e serrilhada, que abafa o ruído do voo.", p: [-1.97291, -0.36235, 3.37614] },
+          { t: "Garras", d: "As patas estão presas à base com arame interno, invisível de qualquer ângulo.", p: [-0.4374, 1.5236, 0.44771] },
+          { t: "Etiqueta de coleção", d: "Cada peça leva um número de registo, como nos museus.", p: [-1.91759, 0.78592, 0.46795] }
+        ] },
       { name: "Raposa", sci: "Vulpes vulpes", mount: "Corpo inteiro",
         uid: "1d36a7778f1142c4bd34345e360206ae", author: "Indy Sarlet",
         url: "https://sketchfab.com/3d-models/red-fox-taxidermy-1d36a7778f1142c4bd34345e360206ae",
-        poster: "https://media.sketchfab.com/models/1d36a7778f1142c4bd34345e360206ae/thumbnails/ce2d5173d1784d94b78b71580cf6b66c/4016918f6e7842e4a03bf74c78c0d00b.jpeg" },
+        poster: "https://media.sketchfab.com/models/1d36a7778f1142c4bd34345e360206ae/thumbnails/ce2d5173d1784d94b78b71580cf6b66c/4016918f6e7842e4a03bf74c78c0d00b.jpeg",
+        notes: [
+          { t: "Olhos", d: "Íris âmbar e pupila vertical, como nos gatos — uma adaptação à caça ao crepúsculo.", p: [7.83577, -4.77944, 13.76603] },
+          { t: "Orelhas", d: "Grandes e móveis, ouvem um rato debaixo da neve. Na montagem ficam em alerta.", p: [5.89102, -7.3882, 15.89361] },
+          { t: "Cauda", d: "A cauda farta serve de cobertor no inverno; a ponta branca é típica da espécie.", p: [-9.65287, 10.6463, 8.23756] },
+          { t: "Focinho", d: "O nariz é pintado e envernizado para parecer húmido, como no animal vivo.", p: [9.93231, -6.08061, 12.17988] }
+        ] },
       { name: "Texugo", sci: "Meles meles", mount: "Corpo inteiro sobre rocha",
         uid: "dbd716aed8e24091a32c171fd7a17cf7", author: "axonite",
         url: "https://sketchfab.com/3d-models/badger-taxidermy-dbd716aed8e24091a32c171fd7a17cf7",
-        poster: "https://media.sketchfab.com/models/dbd716aed8e24091a32c171fd7a17cf7/thumbnails/a202cca87245438db8809f88bb1c1a09/d2a2810a6a404adb8df91a5067540899.jpeg" },
+        poster: "https://media.sketchfab.com/models/dbd716aed8e24091a32c171fd7a17cf7/thumbnails/a202cca87245438db8809f88bb1c1a09/d2a2810a6a404adb8df91a5067540899.jpeg",
+        notes: [
+          { t: "Máscara", d: "As riscas pretas e brancas da cara são diferentes em cada texugo, como uma impressão digital.", p: [0.33905, -0.08739, 0.4131] },
+          { t: "Garras", d: "Longas e fortes, feitas para escavar tocas com vários metros de galerias.", p: [0.22759, -0.00611, 0.12994] },
+          { t: "Pelagem", d: "Pelo grosso e áspero, claro por cima e escuro por baixo — o contrário da maioria dos mamíferos.", p: [0.02818, -0.09765, 0.36411] },
+          { t: "Base em rocha", d: "Rocha esculpida e pintada para recriar a entrada da toca.", p: [-0.0288, -0.13283, 0.09882] }
+        ] },
       { name: "Faisão", sci: "Phasianus colchicus", mount: "Corpo inteiro sobre tronco",
         uid: "6cf3cd84d4784a108f639f2dfcdc0269", author: "Indy Sarlet",
         url: "https://sketchfab.com/3d-models/taxidermy-pheasant-bird-6cf3cd84d4784a108f639f2dfcdc0269",
-        poster: "https://media.sketchfab.com/models/6cf3cd84d4784a108f639f2dfcdc0269/thumbnails/97f8c712a8fc436f97d12431a36d1fab/26c66e3ac6504c619bf576ce55ecae17.jpeg" },
+        poster: "https://media.sketchfab.com/models/6cf3cd84d4784a108f639f2dfcdc0269/thumbnails/97f8c712a8fc436f97d12431a36d1fab/26c66e3ac6504c619bf576ce55ecae17.jpeg",
+        notes: [
+          { t: "Carúncula", d: "A pele vermelha à volta do olho incha na época de acasalamento e é repintada na montagem.", p: [-4.16149, -10.93995, 19.6993] },
+          { t: "Cauda", d: "As penas da cauda podem passar dos 50 cm e são alinhadas uma a uma.", p: [10.90917, 6.16355, 26.8871] },
+          { t: "Plumagem", d: "Cada pena tem uma orla escura que desenha o padrão de escamas cor de cobre.", p: [-1.5388, -5.83766, 17.66241] },
+          { t: "Poleiro", d: "Tronco de bétula natural, seco e tratado, que serve de base à peça.", p: [1.17486, -1.0811, 7.89645] }
+        ] },
       { name: "Pato-real", sci: "Anas platyrhynchos", mount: "Macho · corpo inteiro",
         uid: "5d16fcebf60c4b30a2858d8cc0aee57e", author: "Adam de Kaminski",
         url: "https://sketchfab.com/3d-models/3d-scanned-wild-duck-male-mallard-5d16fcebf60c4b30a2858d8cc0aee57e",
-        poster: "https://media.sketchfab.com/models/5d16fcebf60c4b30a2858d8cc0aee57e/thumbnails/c019f6066f184ecbaddad8950e852932/1f91aae75c204e70b65a47d28c3dadbc.jpeg" }
+        poster: "https://media.sketchfab.com/models/5d16fcebf60c4b30a2858d8cc0aee57e/thumbnails/c019f6066f184ecbaddad8950e852932/1f91aae75c204e70b65a47d28c3dadbc.jpeg",
+        notes: [
+          { t: "Uma peça centenária", d: "Este pato foi montado em 1920, na Suécia, e ainda hoje guarda a casa da família. Uma boa taxidermia atravessa gerações.", p: [-3.30625, 1.95733, 4.70105] },
+          { t: "Dentes no bico?", d: "Os patos não têm dentes: as serrilhas do bico são lamelas finas que filtram a comida da água.", p: [-2.90552, 1.37403, 7.27356] },
+          { t: "Pés sem frio", d: "Os pés não têm gordura nem penas: o sangue que desce aquece o que sobe, como um permutador de calor.", p: [-1.92124, 2.29233, 0.92643] },
+          { t: "Digitalização", d: "Modelo 3D de Adam de Kaminski (2021), a partir de uma peça de família.", p: [0.47109, 0.27134, 0.73542] }
+        ] }
     ]
   },
-
   /* -----------------------------------------------------------------------
      III · CATÁLOGO — cat: aves | mamiferos | peixes | trofeus
      ----------------------------------------------------------------------- */
@@ -249,7 +297,7 @@ window.FORMOSINHO = {
   /* Outras imagens que precisam de crédito */
   extraCredits: [
     { what: "Capa · desfiladeiro", author: "Luís Ascenso", license: "by", version: "3.0", url: "https://commons.wikimedia.org/wiki/File:Fjath%C3%A1rgj%C3%BAfur_Canyon_(182065101).jpeg" },
-    { what: "Fig. A · armário de coleção", author: "Jametiks", license: "by", version: "2.0", url: "https://www.flickr.com/photos/14247646@N00/3156859138" },
+    { what: "Armário de coleção", author: "Jametiks", license: "by", version: "2.0", url: "https://www.flickr.com/photos/14247646@N00/3156859138" },
     { what: "Detalhe · guarda-rios", author: "Anagoria", license: "by", version: "3.0", url: "https://commons.wikimedia.org/w/index.php?curid=28126011" }
   ]
 };
