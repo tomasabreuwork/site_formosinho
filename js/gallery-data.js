@@ -20,16 +20,16 @@ window.FORMOSINHO = {
 
   /* -----------------------------------------------------------------------
      TOPO · vídeo de drone (YouTube). Basta trocar o id do vídeo.
-     start/end em segundos (opcional) para escolher o excerto em ciclo.
+     trimStart / trimEnd: segundos cortados no início e no fim (o ciclo salta-os).
      ----------------------------------------------------------------------- */
   heroVideo: {
     youtube: "Ok_qDnM7SiU",
-    start: 0,
-    end: 0,
+    trimStart: 1,
+    trimEnd: 10,
     credit: { author: "Hugo Carrilho — “Mertola | Drone 4k”", license: "", version: "", url: "https://www.youtube.com/watch?v=Ok_qDnM7SiU" }
   },
 
-  /* Frases do topo no telemóvel (mudam de 3 em 3 segundos) */
+  /* Frase por baixo do título (muda de 3 em 3 segundos) */
   heroPhrases: [
     "Do habitat à vitrine.",
     "Cada peça é um retrato.",
@@ -39,7 +39,7 @@ window.FORMOSINHO = {
   ],
 
   /* -----------------------------------------------------------------------
-     PROMOÇÃO · barra no fundo do ecrã (só em computador).
+     PROMOÇÃO · barra no fundo do ecrã (só em computador, depois do topo).
      active: false para desligar. Desaparece sozinha depois de "until".
      ----------------------------------------------------------------------- */
   promo: {
@@ -56,13 +56,45 @@ window.FORMOSINHO = {
   },
 
   /* -----------------------------------------------------------------------
-     VI · EM VOLTA · cabeça de veado 3D (visualizador Sketchfab)
+     VI · EM VOLTA · peças em 3D (visualizador Sketchfab).
+     uid = código do modelo no endereço do Sketchfab. O primeiro abre por defeito.
      ----------------------------------------------------------------------- */
   turn3d: {
-    sketchfab: "b52f0e3e6de44dbe9f80794c30cc3241",
-    title: "Cabeça de veado montada — modelo 3D",
     autospin: 0.18,
-    credit: { author: "3DScanX — “Deer Shoulder Mount SD-Fast Sample 3D Scan”", license: "", version: "", url: "https://sketchfab.com/3d-models/deer-shoulder-mount-sd-fast-sample-3d-scan-b52f0e3e6de44dbe9f80794c30cc3241" }
+    models: [
+      { name: "Veado", sci: "Odocoileus virginianus", mount: "Montagem de ombro",
+        uid: "b52f0e3e6de44dbe9f80794c30cc3241", author: "3DScanX",
+        url: "https://sketchfab.com/3d-models/deer-shoulder-mount-sd-fast-sample-3d-scan-b52f0e3e6de44dbe9f80794c30cc3241",
+        poster: "https://media.sketchfab.com/models/b52f0e3e6de44dbe9f80794c30cc3241/thumbnails/5802f11461a04b41885db3a8ea28ab51/daae7e72a2634df5bcdede29ed75858d.jpeg" },
+      { name: "Javali", sci: "Sus scrofa", mount: "Cabeça em escudo de madeira",
+        uid: "b91670a9cb4c43f3a393090fcd64b496", author: "Austin Beaulier",
+        url: "https://sketchfab.com/3d-models/boar-head-photogrammetry-b91670a9cb4c43f3a393090fcd64b496",
+        poster: "https://media.sketchfab.com/models/b91670a9cb4c43f3a393090fcd64b496/thumbnails/1ed05f7b333b4c68970115193de42b79/6938356dd3354bb98723b2f533b0b29c.jpeg" },
+      { name: "Lobo-ibérico", sci: "Canis lupus signatus", mount: "Corpo inteiro · peça de museu",
+        uid: "5a667b8ae1874ed19b007c1fe9c1d43b", author: "Museo [UV] Historia Natural",
+        url: "https://sketchfab.com/3d-models/iberian-wolf-taxidermy-canis-lupus-signatus-5a667b8ae1874ed19b007c1fe9c1d43b",
+        poster: "https://media.sketchfab.com/models/5a667b8ae1874ed19b007c1fe9c1d43b/thumbnails/1c0e2a818a7a466ea1281c00204764ae/72b4f65b014047c6aba7a733cf97e9d3.jpeg" },
+      { name: "Coruja-das-torres", sci: "Tyto alba", mount: "Corpo inteiro sobre base",
+        uid: "608a7502cf2643d9ab4c89294199a8d1", author: "The Watt Institution",
+        url: "https://sketchfab.com/3d-models/barn-owl-tyto-alba-608a7502cf2643d9ab4c89294199a8d1",
+        poster: "https://media.sketchfab.com/models/608a7502cf2643d9ab4c89294199a8d1/thumbnails/efd0abde135b41c4aaf42dfc17f39c72/359c681d3e6a4b81814fe7fe42256555.jpeg" },
+      { name: "Raposa", sci: "Vulpes vulpes", mount: "Corpo inteiro",
+        uid: "1d36a7778f1142c4bd34345e360206ae", author: "Indy Sarlet",
+        url: "https://sketchfab.com/3d-models/red-fox-taxidermy-1d36a7778f1142c4bd34345e360206ae",
+        poster: "https://media.sketchfab.com/models/1d36a7778f1142c4bd34345e360206ae/thumbnails/ce2d5173d1784d94b78b71580cf6b66c/4016918f6e7842e4a03bf74c78c0d00b.jpeg" },
+      { name: "Texugo", sci: "Meles meles", mount: "Corpo inteiro sobre rocha",
+        uid: "dbd716aed8e24091a32c171fd7a17cf7", author: "axonite",
+        url: "https://sketchfab.com/3d-models/badger-taxidermy-dbd716aed8e24091a32c171fd7a17cf7",
+        poster: "https://media.sketchfab.com/models/dbd716aed8e24091a32c171fd7a17cf7/thumbnails/a202cca87245438db8809f88bb1c1a09/d2a2810a6a404adb8df91a5067540899.jpeg" },
+      { name: "Faisão", sci: "Phasianus colchicus", mount: "Corpo inteiro sobre tronco",
+        uid: "6cf3cd84d4784a108f639f2dfcdc0269", author: "Indy Sarlet",
+        url: "https://sketchfab.com/3d-models/taxidermy-pheasant-bird-6cf3cd84d4784a108f639f2dfcdc0269",
+        poster: "https://media.sketchfab.com/models/6cf3cd84d4784a108f639f2dfcdc0269/thumbnails/97f8c712a8fc436f97d12431a36d1fab/26c66e3ac6504c619bf576ce55ecae17.jpeg" },
+      { name: "Pato-real", sci: "Anas platyrhynchos", mount: "Macho · corpo inteiro",
+        uid: "5d16fcebf60c4b30a2858d8cc0aee57e", author: "Adam de Kaminski",
+        url: "https://sketchfab.com/3d-models/3d-scanned-wild-duck-male-mallard-5d16fcebf60c4b30a2858d8cc0aee57e",
+        poster: "https://media.sketchfab.com/models/5d16fcebf60c4b30a2858d8cc0aee57e/thumbnails/c019f6066f184ecbaddad8950e852932/1f91aae75c204e70b65a47d28c3dadbc.jpeg" }
+    ]
   },
 
   /* -----------------------------------------------------------------------

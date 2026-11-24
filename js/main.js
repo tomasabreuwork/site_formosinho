@@ -1,4 +1,4 @@
-﻿/* =========================================================================
+/* =========================================================================
    FORMOSINHO — interações (sem dependências)
    ========================================================================= */
 (() => {
@@ -45,46 +45,60 @@
   const hero = $(".hero"), heroSticky = $(".hero__sticky"), heroFrame = $(".hero__frame"), heroMedia = $(".hero__media");
   const heroMark = $(".hero__mark");
 
-  /* Vídeo de drone a partir do YouTube (leitor oficial, sem som, em ciclo).
-     O vídeo continua alojado no YouTube — não é copiado para o site. */
+  /* Vídeo de drone a partir do YouTube (leitor oficial, sem som).
+     O vídeo continua alojado no YouTube — não é copiado para o site.
+     Sem "loop/playlist" do YouTube (é isso que mostra os botões ⏮ ▶ ⏭): o ciclo é feito aqui,
+     cortando o início e o fim. Sempre que o leitor não está a reproduzir, fica invisível. */
   const HV = D.heroVideo || {};
   const YT_ID = HV.youtube || "";
-  let ytPlayer = null, ytReady = false;
+  const T0 = HV.trimStart ?? 1, T1 = HV.trimEnd ?? 10;
+  let ytPlayer = null, ytReady = false, ytWanted = true, ytSeekAt = 0, ytBufTimer = 0;
   if (YT_ID) heroMedia.style.setProperty("--poster", `url("https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg")`);
+  const showVideo = (on) => heroFrame.classList.toggle("has-video", on);
   (function setupYouTube() {
     if (!YT_ID || RM) return;
-    const start = HV.start || 0, end = HV.end || 0;
     window.onYouTubeIframeAPIReady = () => {
-      const vars = { autoplay: 1, mute: 1, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, loop: 1, playlist: YT_ID,
-        modestbranding: 1, playsinline: 1, rel: 0, start, cc_load_policy: 0 };
+      const vars = { autoplay: 1, mute: 1, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1,
+        playsinline: 1, rel: 0, start: T0, cc_load_policy: 0 };
       if (location.protocol.startsWith("http")) vars.origin = location.origin;
       ytPlayer = new YT.Player("heroYT", {
         host: "https://www.youtube-nocookie.com", videoId: YT_ID, playerVars: vars,
         events: {
           onReady: (e) => { ytReady = true; e.target.mute(); e.target.playVideo(); },
           onStateChange: (e) => {
-            if (e.data === YT.PlayerState.PLAYING) setTimeout(() => heroFrame.classList.add("has-video"), 450);
-            if (e.data === YT.PlayerState.ENDED) e.target.seekTo(start, true);
+            const S = YT.PlayerState;
+            clearTimeout(ytBufTimer);
+            if (e.data === S.PLAYING) { setTimeout(() => { if (ytPlayer.getPlayerState() === S.PLAYING) showVideo(true); }, 350); return; }
+            if (e.data === S.BUFFERING) {
+              // logo a seguir a um corte do ciclo, o buffering é curto: mantém visível
+              if (Date.now() - ytSeekAt > 1500) ytBufTimer = setTimeout(() => showVideo(false), 600);
+              return;
+            }
+            // pausado / terminado / por iniciar → esconde (nunca se veem os controlos) e retoma
+            showVideo(false);
+            if (ytWanted && !document.hidden) setTimeout(() => { ytPlayer.seekTo(T0, true); ytPlayer.playVideo(); }, 250);
           },
-          onError: () => heroFrame.classList.remove("has-video"),
+          onError: () => showVideo(false),
         },
       });
-      // ciclo suave: volta ao início um pouco antes do fim (evita o ecrã final do YouTube)
+      // ciclo: corta o 1.º segundo e os últimos 10
       setInterval(() => {
         if (!ytReady || !ytPlayer.getDuration) return;
         const d = ytPlayer.getDuration(), c = ytPlayer.getCurrentTime();
-        const stop = end || d - 1.2;
-        if (d && c > stop) ytPlayer.seekTo(start, true);
-      }, 400);
+        if (d && c >= d - T1) { ytSeekAt = Date.now(); ytPlayer.seekTo(T0, true); }
+        else if (c > 0 && c < T0 - 0.05) { ytSeekAt = Date.now(); ytPlayer.seekTo(T0, true); }
+      }, 250);
     };
     const s = document.createElement("script");
     s.src = "https://www.youtube.com/iframe_api"; s.async = true;
     document.head.appendChild(s);
     // poupar recursos: pausa quando o hero sai do ecrã
     new IntersectionObserver(([e]) => {
+      ytWanted = e.isIntersecting;
       if (!ytReady) return;
       e.isIntersecting ? ytPlayer.playVideo() : ytPlayer.pauseVideo();
     }).observe(hero);
+    document.addEventListener("visibilitychange", () => { if (ytReady && !document.hidden && ytWanted) ytPlayer.playVideo(); });
   })();
 
   // título letra a letra
@@ -97,13 +111,14 @@
   (document.fonts && document.fonts.ready) ? document.fonts.ready.then(ready) : addEventListener("load", ready);
   setTimeout(ready, 1800);
 
-  // frase do hero (telemóvel) que muda de 3 em 3 segundos
+  // frase do hero que muda de 3 em 3 segundos (só começa depois de o título e a frase entrarem)
   (function rotatePhrases() {
     const box = $(".hero__phrase"), list = D.heroPhrases || [];
-    if (!box || list.length < 2) return;
+    if (!box || !list.length) return;
     let i = 0;
     box.firstElementChild.textContent = list[0];
-    setInterval(() => {
+    if (list.length < 2) return;
+    setTimeout(() => setInterval(() => {
       if (document.hidden || heroE > 0.6) return;
       i = (i + 1) % list.length;
       const old = box.firstElementChild;
@@ -114,7 +129,7 @@
       nu.classList.remove("is-enter");
       old.classList.add("is-leave");
       setTimeout(() => old.remove(), 950);
-    }, 3000);
+    }, 3000), 2600);
   })();
 
   let heroE = 0;
@@ -126,26 +141,19 @@
     heroE = e;
     if (r.bottom < 0) return;
     const small = vw < 820;
-    const gut = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--gut")) || 0;
     const rail = small ? 0 : 44;
-    const it = e * (small ? 76 : Math.max(84, vh * 0.12));
+    // o vídeo recolhe-se numa moldura de papel, com margens iguais
+    const it = e * (small ? 64 : Math.max(84, vh * 0.12));
+    const ib = e * (small ? 64 : Math.max(70, vh * 0.1));
     const il = e * (small ? 16 : Math.max(24, vw * 0.04));
     const ir = e * (small ? 16 : Math.max(24, vw * 0.04) + rail);
-    const ib = e * vh * (small ? 0.27 : 0.22);
     const st = heroSticky.style;
     st.setProperty("--it", it + "px"); st.setProperty("--il", il + "px");
     st.setProperty("--ir", ir + "px"); st.setProperty("--ib", ib + "px");
     st.setProperty("--vs", (1.08 - e * 0.06).toFixed(4));
-    st.setProperty("--hud", clamp(1 - e * 1.8, 0, 1).toFixed(3));
-    st.setProperty("--cap", clamp((e - 0.55) / 0.4, 0, 1).toFixed(3));
-    if (small) {
-      // telemóvel: a marca sobe e desvanece enquanto a imagem se recolhe
-      heroMark.style.transform = `translate3d(0, ${-e * (vh * 0.16)}px, 0) scale(${1 - e * 0.22})`;
-      heroMark.style.opacity = clamp(1 - e * 1.25, 0, 1);
-    } else {
-      heroMark.style.opacity = "";
-      heroMark.style.transform = `translate3d(${e * (il + 20 - gut * 0.2)}px, ${-ib - e * 18}px, 0) scale(${1 - e * 0.42})`;
-    }
+    // a marca (título + frase) sobe ligeiramente e desvanece
+    heroMark.style.transform = `translate3d(0, ${(-e * vh * 0.06).toFixed(1)}px, 0) scale(${(1 - e * 0.25).toFixed(4)})`;
+    heroMark.style.opacity = clamp(1 - e * 1.3, 0, 1).toFixed(3);
   }
 
   /* =====================================================================
@@ -153,7 +161,7 @@
      ===================================================================== */
   const bar = $(".bar"), nowNum = $(".bar__now-num"), nowLabel = $(".bar__now-label");
   const sections = $$("[data-label]");
-  let curLabel = "";
+  let curLabel = "", promoReady = false;
   const themeAt = (y) => {
     for (const s of sections) {
       const r = s.getBoundingClientRect();
@@ -168,7 +176,12 @@
     const idxOpen = document.body.classList.contains("index-open");
     bar.dataset.theme = idxOpen ? (vw < 820 ? "dark" : "light") : themeAt(36);
     // sólida assim que a prancha do topo começa a sair do ecrã
-    bar.classList.toggle("is-solid", !idxOpen && hero.getBoundingClientRect().bottom < vh - 2);
+    const heroGone = hero.getBoundingClientRect().bottom < vh - 2;
+    bar.classList.toggle("is-solid", !idxOpen && heroGone);
+    // no hero só se vê o botão do menu (marca e secção aparecem depois)
+    bar.classList.toggle("in-hero", !idxOpen && !heroGone);
+    // a promoção só aparece depois de sair do hero
+    if (promoReady) promo.classList.toggle("is-on", heroGone);
     const y = vh * 0.4;
     for (const s of sections) {
       const r = s.getBoundingClientRect();
@@ -624,28 +637,63 @@
   }
 
   /* =====================================================================
-     VI · CABEÇA DE VEADO 3D (visualizador Sketchfab, carregado só quando perto)
+     VI · PEÇAS EM 3D (API oficial do visualizador Sketchfab, carregado só quando perto)
+     Menu próprio para escolher o animal; os botões do visualizador ficam bloqueados.
      ===================================================================== */
   (function setupTurn() {
-    const T = D.turn3d || {}, view = $("#turnView");
-    if (!T.sketchfab || !view) return;
-    const params = new URLSearchParams({
-      autostart: 1, preload: 1, autospin: RM ? 0 : (T.autospin ?? 0.18), camera: 0, dnt: 1, scrollwheel: 0, transparent: 1,
-      ui_theme: "dark", ui_infos: 0, ui_controls: 0, ui_stop: 0, ui_inspector: 0, ui_settings: 0, ui_help: 0, ui_vr: 0, ui_ar: 0,
-      ui_ar_help: 0, ui_ar_qrcode: 0, ui_fullscreen: 0, ui_annotations: 0, ui_hint: 2, ui_watermark: 0, ui_watermark_link: 0, ui_loading: 0,
+    const T = D.turn3d || {}, MODELS = T.models || [];
+    const frameEl = $("#turnFrame"), menu = $("#turnMenu"), poster = $(".case__poster");
+    const spec = $("#turnSpec"), credit = $("#turnCredit"), plate = $("#turnPlate");
+    if (!MODELS.length || !frameEl) return;
+    let client = null, cur = -1, pending = -1, token = 0;
+
+    MODELS.forEach((m, i) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "turn__opt"; b.setAttribute("role", "tab");
+      b.innerHTML = `<b>${String(i + 1).padStart(2, "0")}</b>${esc(m.name)}`;
+      b.addEventListener("click", () => show(i));
+      menu.appendChild(b);
     });
-    let loaded = false;
-    const load = () => {
-      if (loaded) return; loaded = true;
-      const f = document.createElement("iframe");
-      f.title = T.title || "Modelo 3D";
-      f.allow = "autoplay; fullscreen; xr-spatial-tracking";
-      f.setAttribute("allowfullscreen", "");
-      f.src = `https://sketchfab.com/models/${T.sketchfab}/embed?${params}`;
-      f.addEventListener("load", () => setTimeout(() => caseEl.classList.add("is-live"), 1600));
-      view.appendChild(f);
+    const opts = $$(".turn__opt", menu);
+
+    function fill(i) {
+      const m = MODELS[i];
+      opts.forEach((o, k) => { o.classList.toggle("is-on", k === i); o.setAttribute("aria-selected", k === i); });
+      spec.querySelector('[data-f="name"]').textContent = m.name;
+      spec.querySelector('[data-f="sci"]').innerHTML = `<i>${esc(m.sci)}</i>`;
+      spec.querySelector('[data-f="mount"]').textContent = m.mount || "—";
+      credit.innerHTML = `Modelo 3D: <a href="${esc(m.url)}" target="_blank" rel="noopener">${esc(m.author)}</a> · Sketchfab`;
+      plate.innerHTML = `Nº 3D-${String(i + 1).padStart(3, "0")} · <i>${esc(m.sci)}</i>`;
+      poster.src = m.poster; poster.alt = `${m.name} — pré-visualização`;
+      frameEl.title = `${m.name} em 3D`;
+    }
+
+    function show(i) {
+      if (i === cur) return;
+      cur = i; fill(i);
+      if (!client) { pending = i; return; }
+      caseEl.classList.remove("is-live");
+      const my = ++token;
+      client.init(MODELS[i].uid, {
+        autostart: 1, preload: 1, autospin: RM ? 0 : (T.autospin ?? 0.18), camera: 0, dnt: 1, scrollwheel: 0, transparent: 1,
+        ui_theme: "dark", ui_infos: 0, ui_controls: 0, ui_stop: 0, ui_inspector: 0, ui_settings: 0, ui_help: 0, ui_vr: 0, ui_ar: 0,
+        ui_ar_help: 0, ui_ar_qrcode: 0, ui_fullscreen: 0, ui_annotations: 0, ui_hint: 2, ui_watermark: 0, ui_watermark_link: 0,
+        success: (api) => {
+          api.start();
+          api.addEventListener("viewerready", () => { if (my === token) caseEl.classList.add("is-live"); });
+        },
+        error: () => { if (my === token) caseEl.classList.remove("is-live"); },
+      });
+    }
+
+    fill(0); cur = 0; pending = 0;
+    const boot = () => {
+      const s = document.createElement("script");
+      s.src = "https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js";
+      s.onload = () => { client = new window.Sketchfab(frameEl); const p = pending; cur = -1; show(p); };
+      document.head.appendChild(s);
     };
-    new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { load(); o.disconnect(); } }, { rootMargin: "700px 0px" }).observe(view);
+    new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { boot(); o.disconnect(); } }, { rootMargin: "700px 0px" }).observe(caseEl);
   })();
 
   /* =====================================================================
@@ -665,9 +713,9 @@
     track.style.setProperty("--promo-dur", Math.max(24, (P.items || []).join(" ").length * 0.9) + "s");
     promo.hidden = false;
     document.body.classList.add("has-promo");
-    setTimeout(() => promo.classList.add("is-on"), 1600);
+    promoReady = true;
     $(".promo__close").addEventListener("click", () => {
-      promo.classList.remove("is-on"); sessionStorage.setItem(closedKey, "1");
+      promoReady = false; promo.classList.remove("is-on"); sessionStorage.setItem(closedKey, "1");
       document.body.classList.remove("has-promo");
       setTimeout(() => promo.remove(), 800);
     });
@@ -706,7 +754,7 @@
     creditList.appendChild(li);
   };
   if (HV.credit) addCredit("Vídeo do topo (YouTube)", HV.credit);
-  if (D.turn3d && D.turn3d.credit) addCredit("Modelo 3D · cabeça de veado", D.turn3d.credit);
+  ((D.turn3d && D.turn3d.models) || []).forEach((m) => addCredit(`Modelo 3D: ${m.name}`, { author: m.author, url: m.url }));
   (D.extraCredits || []).forEach((c) => addCredit(c.what, c));
   STEPS.forEach((s) => addCredit(`Método: ${s.title}`, s.credit));
   PIECES.forEach((p) => addCredit(p.title, p.credit));

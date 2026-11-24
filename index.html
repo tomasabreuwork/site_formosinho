@@ -25,12 +25,12 @@
   <div class="paper-grain" aria-hidden="true"></div>
 
   <!-- ===================== BARRA SUPERIOR ===================== -->
-  <header class="bar" data-theme="dark">
+  <header class="bar in-hero" data-theme="dark">
     <a href="#topo" class="bar__brand" aria-label="Formosinho — início">
       <span class="bar__word">Formosinho</span>
       <span class="bar__sub">taxidermia &amp; história natural</span>
     </a>
-    <p class="bar__now" aria-live="polite"><span class="bar__now-num">—</span><span class="bar__now-label">Prancha I · O território</span></p>
+    <p class="bar__now" aria-live="polite"><span class="bar__now-num">—</span><span class="bar__now-label">Formosinho</span></p>
     <button class="bar__index" aria-expanded="false" aria-controls="indice">
       <span class="bar__index-text">Índice</span>
       <span class="bar__index-icon" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -65,7 +65,7 @@
   <main>
 
     <!-- ===================== HERO · VÍDEO DE DRONE ===================== -->
-    <section class="hero" id="topo" data-theme="dark" data-label="Prancha I · O território" data-num="—">
+    <section class="hero" id="topo" data-theme="dark" data-label="Formosinho" data-num="—">
       <div class="hero__sticky">
         <div class="hero__frame">
           <!-- Vídeo de drone (YouTube, sem som, em ciclo). O id está em js/gallery-data.js → heroVideo -->
@@ -80,14 +80,7 @@
             </h1>
             <p class="hero__phrase" aria-live="polite"><span>Do habitat à vitrine.</span></p>
           </div>
-          <p class="hero__intro">Taxidermia de autor<br />&amp; gabinete de história natural</p>
         </div>
-
-        <div class="plate-caption">
-          <p class="plate-caption__l"><b>Prancha I.</b> O território.</p>
-          <p class="plate-caption__r">Antes de qualquer peça, há um lugar. Estudamos o habitat de cada espécie para que nada na postura seja inventado.</p>
-        </div>
-        <p class="hero__cue" aria-hidden="true">desça para abrir o catálogo <span>↓</span></p>
       </div>
     </section>
 
@@ -237,31 +230,35 @@
 
       <div class="turn__grid">
         <div class="turn__text">
-          <p class="lead reveal">Uma montagem vê-se de todos os ângulos. Rode a peça como se a tivesse nas mãos.</p>
-          <ul class="turn__how reveal">
-            <li><b>Rodar</b><span>arraste com o rato ou com o dedo</span></li>
-            <li><b>Aproximar</b><span>duplo clique · pinça no ecrã</span></li>
-            <li><b>Repor</b><span>duplo clique no fundo</span></li>
-          </ul>
-          <dl class="turn__spec reveal">
-            <div><dt>Peça</dt><dd>Veado-de-cauda-branca, montagem de ombro</dd></div>
-            <div><dt>Espécie</dt><dd><i>Odocoileus virginianus</i></dd></div>
-            <div><dt>Registo</dt><dd>Digitalização 3D por fotogrametria</dd></div>
+          <p class="lead reveal">Uma montagem vê-se de todos os ângulos. Escolha uma peça da coleção e rode-a como se a tivesse nas mãos.</p>
+
+          <p class="turn__label">Escolha a peça</p>
+          <div class="turn__menu" id="turnMenu" role="tablist" aria-label="Escolher animal"><!-- gerado --></div>
+
+          <dl class="turn__spec" id="turnSpec">
+            <div><dt>Peça</dt><dd data-f="name">—</dd></div>
+            <div><dt>Espécie</dt><dd data-f="sci">—</dd></div>
+            <div><dt>Montagem</dt><dd data-f="mount">—</dd></div>
           </dl>
-          <p class="turn__credit">Modelo 3D: <a href="https://sketchfab.com/3d-models/deer-shoulder-mount-sd-fast-sample-3d-scan-b52f0e3e6de44dbe9f80794c30cc3241" target="_blank" rel="noopener">“Deer Shoulder Mount”, 3DScanX</a> · Sketchfab</p>
+          <p class="turn__how">Arraste para rodar · pinça ou duplo clique para aproximar</p>
+          <p class="turn__credit" id="turnCredit"></p>
         </div>
 
         <figure class="case" id="case3d">
           <div class="case__glass">
             <div class="case__view" id="turnView">
-              <img class="case__poster" src="https://media.sketchfab.com/models/b52f0e3e6de44dbe9f80794c30cc3241/thumbnails/5802f11461a04b41885db3a8ea28ab51/daae7e72a2634df5bcdede29ed75858d.jpeg" alt="Cabeça de veado montada — pré-visualização" loading="lazy" />
+              <img class="case__poster" src="" alt="" />
+              <iframe id="turnFrame" title="Peça em 3D" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
+              <!-- bloqueiam os botões do visualizador: só é possível rodar/aproximar a peça -->
+              <span class="case__shield case__shield--top" aria-hidden="true"></span>
+              <span class="case__shield case__shield--bottom" aria-hidden="true"></span>
               <p class="case__loading"><span></span>A preparar a peça 3D…</p>
             </div>
             <span class="case__shine" aria-hidden="true"></span>
             <span class="case__edge case__edge--l" aria-hidden="true"></span>
             <span class="case__edge case__edge--r" aria-hidden="true"></span>
           </div>
-          <div class="case__plinth"><span class="case__plate">Nº 3D-001 · <i>Odocoileus virginianus</i></span></div>
+          <div class="case__plinth"><span class="case__plate" id="turnPlate">Nº 3D-001</span></div>
         </figure>
       </div>
     </section>
