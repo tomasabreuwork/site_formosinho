@@ -259,9 +259,10 @@
     st.setProperty("--it", it + "px"); st.setProperty("--il", il + "px");
     st.setProperty("--ir", ir + "px"); st.setProperty("--ib", ib + "px");
     st.setProperty("--vs", (1.08 - e * 0.06).toFixed(4));
-    // a marca (título + frase) sobe ligeiramente e desvanece
-    heroMark.style.transform = `translate3d(0, ${(-e * vh * 0.06).toFixed(1)}px, 0) scale(${(1 - e * 0.25).toFixed(4)})`;
-    heroMark.style.opacity = clamp(1 - e * 1.3, 0, 1).toFixed(3);
+    // a marca (título + frase) afasta-se (zoom out) ao descer e volta (zoom in) ao subir;
+    // nunca desaparece: fica sempre visível dentro da moldura
+    heroMark.style.transform = `translate3d(0, ${(-e * vh * 0.04).toFixed(1)}px, 0) scale(${(1 - e * 0.3).toFixed(4)})`;
+    heroMark.style.opacity = (1 - e * 0.12).toFixed(3);
   }
 
   /* =====================================================================
@@ -381,8 +382,12 @@
   /* =====================================================================
      II · MÉTODO
      ===================================================================== */
-  const figsBox = $("#methodFigs"), stepsBox = $("#methodSteps");
+  const figsBox = $("#methodFigs"), stepsBox = $("#methodSteps"), ghostsBox = $("#methodGhosts");
   STEPS.forEach((s, i) => {
+    const g = document.createElement("span");
+    g.className = "plate__ghost"; g.textContent = s.title;
+    ghostsBox.appendChild(g);
+
     const fig = document.createElement("div");
     fig.className = "plate__fig-img" + (i === 0 ? " is-on" : "");
     fig.innerHTML = `<img src="${esc(s.src)}" alt="${esc(s.title)}" loading="lazy" data-ph="${esc(s.title)}">`;
@@ -398,12 +403,17 @@
       <p class="step__time">${esc(s.time || "")}</p>`;
     stepsBox.appendChild(li);
   });
-  const figs = $$(".plate__fig-img"), steps = $$(".step");
+  const figs = $$(".plate__fig-img"), steps = $$(".step"), ghosts = $$(".plate__ghost");
+  const figImgs = figs.map((f) => f.querySelector("img"));
+  const SCRUB = !RM && STEPS.length > 0;
+  if (SCRUB) $("#metodo").classList.add("is-scrub");
+  const DESK = matchMedia("(min-width: 821px)");
+  const smooth = (t) => t * t * (3 - 2 * t);
   const figLabel = $(".plate__fig"), methodRule = $(".method__rule span"), methodSec = $("#metodo");
   let curStep = 0;
   const setStep = (i) => {
     if (i === curStep) return;
-    figs.forEach((f, k) => { f.classList.remove("was-on"); if (k === curStep) f.classList.add("was-on"); f.classList.toggle("is-on", k === i); });
+    if (!SCRUB) figs.forEach((f, k) => { f.classList.remove("was-on"); if (k === curStep) f.classList.add("was-on"); f.classList.toggle("is-on", k === i); });
     steps.forEach((s, k) => s.classList.toggle("is-active", k === i));
     figLabel.textContent = STEPS[i].title;
     curStep = i;
@@ -416,6 +426,38 @@
     if (r.bottom < 0 || r.top > vh) return;
     const p = clamp((vh * 0.5 - r.top) / r.height, 0, 1);
     methodRule.style.height = p * 100 + "%";
+    if (!SCRUB) return;
+
+    // posição contínua: 2.4 = 40% do caminho entre o passo 3 e o passo 4
+    const mid = vh / 2;
+    const c = steps.map((s) => { const b = s.getBoundingClientRect(); return b.top + b.height / 2; });
+    let pos = 0;
+    if (mid >= c[c.length - 1]) pos = c.length - 1;
+    else for (let k = 0; k < c.length - 1; k++) {
+      if (mid >= c[k] && mid < c[k + 1]) { pos = k + (mid - c[k]) / (c[k + 1] - c[k]); break; }
+    }
+
+    // texto de cada passo: cada linha anda a uma velocidade diferente
+    steps.forEach((s, k) => {
+      const d = clamp((c[k] - mid) / vh, -1.2, 1.2);
+      s.style.setProperty("--d", d.toFixed(3));
+      s.style.setProperty("--o", (1 - Math.min(1, Math.abs(d) * 1.7) * 0.74).toFixed(3));
+    });
+    if (!DESK.matches) return;
+
+    // prancha: a figura seguinte sobe por baixo da anterior, enquanto ambas deslizam
+    figs.forEach((f, k) => {
+      const rev = k === 0 ? 1 : smooth(clamp((pos - (k - 1) - 0.4) / 0.6, 0, 1));
+      f.style.zIndex = k + 1;
+      f.style.clipPath = `inset(${((1 - rev) * 100).toFixed(2)}% 0 0 0)`;
+      figImgs[k].style.transform = `translate3d(0, ${(clamp(pos - k, -1, 1) * -6).toFixed(2)}%, 0) scale(${(1.14 + (1 - rev) * 0.14).toFixed(3)})`;
+    });
+    // título fantasma: entra por baixo e sai por cima, mais depressa do que a imagem
+    ghosts.forEach((g, k) => {
+      const d = pos - k;
+      g.style.opacity = clamp(1 - Math.abs(d) * 1.8, 0, 1).toFixed(3);
+      g.style.transform = `translate3d(${(d * -4).toFixed(2)}%, ${(d * -140).toFixed(1)}%, 0)`;
+    });
   }
 
   /* =====================================================================
@@ -485,6 +527,7 @@
       rows.forEach((r) => { r.parentElement.hidden = !(c === "all" || r.dataset.cat === c); });
       layoutVitrine();
       catCount.textContent = visibleIdx().length;
+      vitrine.scrollLeft = 0; updateVitrineNav();
       let d = 0;
       items.forEach((el) => { if (!el.hidden) { el.style.transitionDelay = (d++ * 60) + "ms"; requestAnimationFrame(() => el.classList.remove("is-out")); } });
       setTimeout(() => items.forEach((el) => (el.style.transitionDelay = "")), 900);
@@ -494,11 +537,38 @@
   layoutVitrine();
   catCount.textContent = PIECES.length;
 
+  // Telemóvel: a vitrine é uma fila deslizante, com contador, barra e setas
+  const vNav = $(".vitrine-nav"), vFill = $(".vitrine-nav__fill"), vCount = $(".vitrine-nav__count b"), vTotal = $(".vitrine-nav__count span");
+  const vBtns = $$(".vitrine-nav__btn");
+  const shownItems = () => items.filter((el) => !el.hidden);
+  function updateVitrineNav() {
+    const list = shownItems(), max = vitrine.scrollWidth - vitrine.clientWidth;
+    if (!list.length) return;
+    const p = max > 0 ? vitrine.scrollLeft / max : 0;
+    const x0 = vitrine.getBoundingClientRect().left;
+    let cur = 0, best = Infinity;
+    list.forEach((el, k) => { const dx = Math.abs(el.getBoundingClientRect().left - x0); if (dx < best) { best = dx; cur = k; } });
+    if (p > 0.995) cur = list.length - 1;
+    vFill.style.setProperty("--p", Math.max(p, 1 / list.length).toFixed(3));
+    vCount.textContent = String(cur + 1).padStart(2, "0");
+    vTotal.textContent = String(list.length).padStart(2, "0");
+    vBtns[0].disabled = vitrine.scrollLeft < 4;
+    vBtns[1].disabled = vitrine.scrollLeft > max - 4;
+  }
+  vitrine.addEventListener("scroll", () => requestAnimationFrame(updateVitrineNav), { passive: true });
+  addEventListener("resize", updateVitrineNav);
+  vBtns.forEach((b) => b.addEventListener("click", () => {
+    const first = shownItems()[0]; if (!first) return;
+    const step = first.getBoundingClientRect().width + parseFloat(getComputedStyle(vitrine).columnGap || 16);
+    vitrine.scrollBy({ left: step * +b.dataset.dir, behavior: RM ? "auto" : "smooth" });
+  }));
+  updateVitrineNav();
+
   // Vitrine ⇄ Índice
   $$(".view-toggle button").forEach((b) => b.addEventListener("click", () => {
     const v = b.dataset.view;
     $$(".view-toggle button").forEach((x) => { const on = x === b; x.classList.toggle("is-on", on); x.setAttribute("aria-pressed", on); });
-    vitrine.hidden = v !== "vitrine"; ledger.hidden = v !== "indice";
+    vitrine.hidden = v !== "vitrine"; ledger.hidden = v !== "indice"; vNav.hidden = v !== "vitrine";
   }));
 
   const openPiece = (i) => {

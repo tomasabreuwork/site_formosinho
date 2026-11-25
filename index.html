@@ -149,6 +149,7 @@
         <div class="method__plate">
           <div class="plate">
             <div class="plate__figs" id="methodFigs"><!-- gerado --></div>
+            <div class="plate__ghosts" id="methodGhosts" aria-hidden="true"><!-- gerado --></div>
             <p class="plate__label"><span class="plate__fig"></span></p>
           </div>
           <div class="method__rule" aria-hidden="true"><span></span></div>
@@ -174,6 +175,13 @@
       </div>
 
       <div class="vitrine" id="vitrine"><!-- gerado --></div>
+      <!-- só no telemóvel: a vitrine passa a ser uma fila que se desliza para o lado -->
+      <div class="vitrine-nav" aria-label="Navegar no catálogo">
+        <button class="vitrine-nav__btn" type="button" data-dir="-1" aria-label="Peça anterior">←</button>
+        <div class="vitrine-nav__track" aria-hidden="true"><span class="vitrine-nav__fill"></span></div>
+        <span class="vitrine-nav__count"><b>01</b> / <span>12</span></span>
+        <button class="vitrine-nav__btn" type="button" data-dir="1" aria-label="Peça seguinte">→</button>
+      </div>
 
       <div class="ledger" id="ledger" hidden>
         <div class="ledger__head" aria-hidden="true">
