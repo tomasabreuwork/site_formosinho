@@ -8,9 +8,9 @@ Quase tudo se edita em **`js/gallery-data.js`**:
 
 | Bloco          | O que controla                                           |
 | -------------- | -------------------------------------------------------- |
-| `heroVideo`    | vídeo de drone do topo (id do YouTube, início/fim)       |
+| `heroVideo`    | vídeo de drone do topo (`src` de um MP4 no site ou id do YouTube, início/fim) |
 | `heroPhrases`  | frases que mudam de 3 em 3 s no topo (telemóvel)         |
-| `promo`        | barra de promoções no fundo (computador) — `active`, `until`, textos |
+| `promo`        | barra de promoções no fundo (computador) — `active`, `until` (contagem decrescente), `cta`, textos |
 | `turn3d`       | modelo 3D da secção "Em volta" (id do Sketchfab)         |
 | `pieces`       | peças do catálogo                                        |
 | `steps`        | os 5 tempos do método                                    |
@@ -18,6 +18,9 @@ Quase tudo se edita em **`js/gallery-data.js`**:
 | `pins`         | pontos anotados da lupa                                  |
 
 As imagens estão em `images/` (ver `images/LEIA-ME.txt`).
+
+Os tipos de letra (Cormorant Garamond, Manrope e IBM Plex Mono, licença SIL OFL) estão
+alojados no próprio site, em `fonts/` + `css/fonts.css`, para não dependerem do Google Fonts.
 
 > As fotografias atuais são provisórias (licenças livres, com créditos no rodapé).
 > Antes do lançamento, substitua-as pelas peças reais do atelier.

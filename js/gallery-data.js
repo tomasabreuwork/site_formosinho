@@ -19,7 +19,11 @@ const CC0 = (author, url) => ({ author, license: "cc0", version: "", url });
 window.FORMOSINHO = {
 
   /* -----------------------------------------------------------------------
-     TOPO · vídeo de drone (YouTube). Basta trocar o id do vídeo.
+     TOPO · vídeo de drone.
+     src: caminho de um MP4 alojado no site (ex. "videos/hero.mp4"). Quando existe,
+          tem prioridade e o YouTube deixa de ser usado (sem botão de play, sem falhas).
+     poster (opcional): imagem mostrada enquanto o vídeo carrega.
+     youtube: id do YouTube, usado só quando não há "src".
      trimStart / trimEnd: segundos cortados no início e no fim (o ciclo salta-os).
      ----------------------------------------------------------------------- */
   heroVideo: {
@@ -47,6 +51,7 @@ window.FORMOSINHO = {
     label: "Black Friday",
     until: "2026-12-01T00:00:00",
     href: "#encomendas",
+    cta: "Encomendar",
     items: [
       "−20% em restauros de troféus",
       "Encomendas feitas até 30 de novembro",

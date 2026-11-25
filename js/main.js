@@ -56,10 +56,51 @@
   const YT_ID = HV.youtube || "";
   const T0 = HV.trimStart ?? 10, T1 = HV.trimEnd ?? 10;
   let ytPlayer = null, ytReady = false, ytWanted = true, ytLooping = false, ytLastT = -1, ytStill = 0, ytGoodSince = 0;
-  if (YT_ID) heroMedia.style.setProperty("--poster", `url("https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg")`);
+  if (HV.poster) heroMedia.style.setProperty("--poster", `url("${HV.poster}")`);
+  else if (YT_ID) heroMedia.style.setProperty("--poster", `url("https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg")`);
   const showVideo = (on) => heroFrame.classList.toggle("has-video", on);
+
+  /* Vídeo alojado no próprio site (heroVideo.src): <video> nativo, sem botões nem
+     carregamento de terceiros. Tem prioridade sobre o YouTube. */
+  const VID_SRC = HV.src || "";
+  (function setupNativeVideo() {
+    if (!VID_SRC || RM) return;
+    const v = document.createElement("video");
+    v.className = "hero__video";
+    v.muted = true; v.defaultMuted = true; v.playsInline = true; v.autoplay = true; v.loop = false;
+    v.preload = "auto"; v.disablePictureInPicture = true;
+    v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("aria-hidden", "true");
+    if (HV.poster) v.poster = HV.poster;
+    (HV.sources || [{ src: VID_SRC, type: "video/mp4" }]).forEach((o) => {
+      const s = document.createElement("source"); s.src = o.src; s.type = o.type || "video/mp4";
+      if (o.media) s.media = o.media;
+      v.appendChild(s);
+    });
+    $(".hero__yt").replaceWith(v);
+    let wanted = true, looping = false;
+    const play = () => { const p = v.play(); if (p) p.catch(() => {}); };
+    v.addEventListener("loadedmetadata", () => { if (T0 && v.currentTime < T0) v.currentTime = T0; });
+    v.addEventListener("playing", () => showVideo(true));
+    // ciclo: desvanece no fim, volta ao início com o vídeo invisível e reaparece
+    v.addEventListener("timeupdate", () => {
+      if (looping || !v.duration) return;
+      if (v.currentTime >= v.duration - T1 - 0.8) {
+        looping = true; heroFrame.classList.add("yt-dip");
+        setTimeout(() => {
+          v.currentTime = T0; play();
+          heroFrame.classList.remove("yt-dip");
+          setTimeout(() => { looping = false; }, 400);
+        }, 650);
+      }
+    });
+    v.addEventListener("ended", () => { v.currentTime = T0; play(); });
+    new IntersectionObserver(([e]) => { wanted = e.isIntersecting; if (wanted) play(); else v.pause(); }).observe(hero);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden && wanted) play(); });
+    play();
+  })();
+
   (function setupYouTube() {
-    if (!YT_ID || RM) return;
+    if (!YT_ID || VID_SRC || RM) return;
     window.onYouTubeIframeAPIReady = () => {
       const vars = { autoplay: 1, mute: 1, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1,
         playsinline: 1, rel: 0, start: T0, cc_load_policy: 0 };
@@ -234,6 +275,29 @@
     else if (i % 5 === 0) t.className = "mid";
     ticks.appendChild(t);
   }
+  // A régua faz de barra de scroll: clicar ou arrastar leva a página para esse ponto
+  (function rulerScroll() {
+    let dragging = false;
+    const go = (clientY) => {
+      const max = document.documentElement.scrollHeight - vh;
+      const p = clamp((clientY - 14) / (vh - 28), 0, 1);
+      window.scrollTo({ top: p * max, behavior: "instant" });
+    };
+    ruler.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;
+      dragging = true; ruler.setPointerCapture(e.pointerId); ruler.classList.add("is-dragging");
+      document.documentElement.style.scrollBehavior = "auto";
+      go(e.clientY); e.preventDefault();
+    });
+    ruler.addEventListener("pointermove", (e) => { if (dragging) go(e.clientY); });
+    const stop = () => {
+      if (!dragging) return;
+      dragging = false; ruler.classList.remove("is-dragging");
+      document.documentElement.style.scrollBehavior = "";
+    };
+    ruler.addEventListener("pointerup", stop);
+    ruler.addEventListener("pointercancel", stop);
+  })();
   function updateRuler() {
     const max = document.documentElement.scrollHeight - vh;
     const p = max > 0 ? clamp(scrollY / max, 0, 1) : 0;
@@ -744,8 +808,19 @@
     const expired = P && P.until && new Date() > new Date(P.until);
     const closedKey = "formosinho-promo-" + (P && P.label || "");
     if (!P || !P.active || expired || sessionStorage.getItem(closedKey)) { promo.remove(); return; }
-    $(".promo__tag").textContent = P.label;
+    $(".promo__label").textContent = P.label;
+    $(".promo__cta-text").textContent = P.cta || "Encomendar";
     $(".promo__link").href = P.href || "#encomendas";
+    // contagem decrescente até ao fim da campanha (campo "until")
+    const clock = $(".promo__clock"), end = P.until ? new Date(P.until).getTime() : 0;
+    const tick = () => {
+      const ms = end - Date.now();
+      if (ms <= 0) { clock.textContent = ""; return; }
+      const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60, s = Math.floor(ms / 1e3) % 60;
+      const u = (n, l) => `<b>${String(n).padStart(2, "0")}<small>${l}</small></b>`;
+      clock.innerHTML = "termina em " + (d > 0 ? u(d, "d") : "") + u(h, "h") + u(m, "m") + (d > 0 ? "" : u(s, "s"));
+    };
+    if (end) { tick(); setInterval(tick, 1000); }
     const track = $(".promo__track");
     const items = (P.items || []).map((t) => `<span>${esc(t)}</span>`).join("");
     track.innerHTML = items.repeat(4) + items.repeat(4); // duas metades iguais → ciclo contínuo
