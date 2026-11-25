@@ -65,6 +65,7 @@
   const VID_SRC = HV.src || "";
   (function setupNativeVideo() {
     if (!VID_SRC || RM) return;
+    const V0 = HV.srcTrimStart ?? 0, V1 = HV.srcTrimEnd ?? 0; // o MP4 já vem cortado
     const v = document.createElement("video");
     v.className = "hero__video";
     v.muted = true; v.defaultMuted = true; v.playsInline = true; v.autoplay = true; v.loop = false;
@@ -79,21 +80,21 @@
     $(".hero__yt").replaceWith(v);
     let wanted = true, looping = false;
     const play = () => { const p = v.play(); if (p) p.catch(() => {}); };
-    v.addEventListener("loadedmetadata", () => { if (T0 && v.currentTime < T0) v.currentTime = T0; });
+    v.addEventListener("loadedmetadata", () => { if (V0 && v.currentTime < V0) v.currentTime = V0; });
     v.addEventListener("playing", () => showVideo(true));
     // ciclo: desvanece no fim, volta ao início com o vídeo invisível e reaparece
     v.addEventListener("timeupdate", () => {
       if (looping || !v.duration) return;
-      if (v.currentTime >= v.duration - T1 - 0.8) {
+      if (v.currentTime >= v.duration - V1 - 0.8) {
         looping = true; heroFrame.classList.add("yt-dip");
         setTimeout(() => {
-          v.currentTime = T0; play();
+          v.currentTime = V0; play();
           heroFrame.classList.remove("yt-dip");
           setTimeout(() => { looping = false; }, 400);
         }, 650);
       }
     });
-    v.addEventListener("ended", () => { v.currentTime = T0; play(); });
+    v.addEventListener("ended", () => { v.currentTime = V0; play(); });
     new IntersectionObserver(([e]) => { wanted = e.isIntersecting; if (wanted) play(); else v.pause(); }).observe(hero);
     document.addEventListener("visibilitychange", () => { if (!document.hidden && wanted) play(); });
     play();

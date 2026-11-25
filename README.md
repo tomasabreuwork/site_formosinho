@@ -19,6 +19,9 @@ Quase tudo se edita em **`js/gallery-data.js`**:
 
 As imagens estão em `images/` (ver `images/LEIA-ME.txt`).
 
+O vídeo do topo está em `videos/` (1440p para computador, 1080p para telemóvel, já cortado e sem som),
+usado com autorização do autor (Hugo Carrilho). O YouTube só é usado se `heroVideo.src` estiver vazio.
+
 Os tipos de letra (Cormorant Garamond, Manrope e IBM Plex Mono, licença SIL OFL) estão
 alojados no próprio site, em `fonts/` + `css/fonts.css`, para não dependerem do Google Fonts.
 

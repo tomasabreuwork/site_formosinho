@@ -8,12 +8,11 @@
   <meta name="theme-color" content="#EAE4D6" />
   <meta property="og:title" content="Formosinho — Taxidermia & História Natural" />
   <meta property="og:description" content="Do habitat à vitrine. Peças únicas, montadas à mão." />
-  <meta property="og:image" content="https://i.ytimg.com/vi/Ok_qDnM7SiU/maxresdefault.jpg" />
+  <meta property="og:image" content="https://tomasabreuwork.github.io/site_formosinho/videos/hero-poster.jpg" />
   <meta property="og:type" content="website" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239a2e1f'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-style='italic' font-size='44' fill='%23ebe5d7'%3EF%3C/text%3E%3C/svg%3E" />
 
-  <link rel="preconnect" href="https://www.youtube-nocookie.com" />
-  <link rel="preconnect" href="https://i.ytimg.com" />
+  <link rel="preload" href="videos/hero-poster.jpg" as="image" />
   <link rel="dns-prefetch" href="https://sketchfab.com" />
   <!-- Tipos de letra alojados no próprio site (não dependem do Google Fonts) -->
   <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
@@ -71,7 +70,7 @@
     <section class="hero" id="topo" data-theme="dark" data-label="Formosinho" data-num="—">
       <div class="hero__sticky">
         <div class="hero__frame">
-          <!-- Vídeo de drone (YouTube, sem som, em ciclo). O id está em js/gallery-data.js → heroVideo -->
+          <!-- Vídeo de drone (MP4 alojado no site, sem som, em ciclo). Configuração em js/gallery-data.js → heroVideo -->
           <div class="hero__media" aria-hidden="true">
             <div class="hero__yt"><div id="heroYT"></div></div>
           </div>

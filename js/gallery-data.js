@@ -27,6 +27,12 @@ window.FORMOSINHO = {
      trimStart / trimEnd: segundos cortados no início e no fim (o ciclo salta-os).
      ----------------------------------------------------------------------- */
   heroVideo: {
+    src: "videos/hero-1440.mp4",
+    sources: [
+      { src: "videos/hero-1080.mp4", media: "(max-width: 820px)" }, // telemóvel
+      { src: "videos/hero-1440.mp4" }                                // computador
+    ],
+    poster: "videos/hero-poster.jpg",
     youtube: "Ok_qDnM7SiU",
     trimStart: 10,
     trimEnd: 10,
