@@ -29,6 +29,58 @@
   const today = () => { const d = new Date(); return `${String(d.getDate()).padStart(2, "0")}.${ROMAN[d.getMonth()]}.${d.getFullYear()}`; };
 
   /* ---------------------------------------------------------------------
+     Ecrã de carregamento: só mostra o site quando estão prontos
+     as fontes, a página (imagens, CSS…) e o vídeo do topo.
+     Rede de segurança: sai sempre ao fim de 15 s.
+     --------------------------------------------------------------------- */
+  const LOADER = (() => {
+    const el = $(".loader"), fill = $(".loader__fill"), pct = $(".loader__pct");
+    const parts = { fonts: 0, page: 0, video: 0 }, W = { fonts: 0.15, page: 0.35, video: 0.5 };
+    const cbs = []; let done = false, shown = 0, needVideo = false;
+    const target = () => Object.keys(W).reduce((a, k) => a + W[k] * parts[k], 0);
+    const finish = () => {
+      if (done) return; done = true;
+      if (fill) fill.style.setProperty("--p", 1);
+      if (pct) pct.textContent = "100";
+      setTimeout(() => {
+        document.documentElement.classList.remove("is-loading");
+        if (el) { el.classList.add("is-done"); setTimeout(() => el.remove(), 1200); }
+        cbs.splice(0).forEach((f) => f());
+      }, 350);
+    };
+    const tick = () => {
+      if (done) return;
+      shown += (target() - shown) * 0.18;
+      if (fill) fill.style.setProperty("--p", shown.toFixed(3));
+      if (pct) pct.textContent = String(Math.min(99, Math.round(shown * 100))).padStart(2, "0");
+      if (parts.fonts >= 1 && parts.page >= 1 && parts.video >= 1) finish();
+      else requestAnimationFrame(tick);
+    };
+    const set = (k, v) => { parts[k] = Math.max(parts[k], clamp(v, 0, 1)); };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => set("fonts", 1)); else set("fonts", 1);
+    if (document.readyState === "complete") set("page", 1); else addEventListener("load", () => set("page", 1));
+    // se nenhum vídeo for registado (sem MP4 ou movimento reduzido), essa parte conta como feita
+    setTimeout(() => { if (!needVideo) set("video", 1); }, 0);
+    setTimeout(finish, 15000);
+    requestAnimationFrame(tick);
+    return {
+      onDone: (f) => (done ? f() : cbs.push(f)),
+      watchVideo(v) {
+        needVideo = true;
+        const buf = () => {
+          if (!v.duration || !v.buffered.length) return;
+          set("video", Math.min(0.9, v.buffered.end(v.buffered.length - 1) / Math.min(v.duration, 6)));
+        };
+        v.addEventListener("progress", buf);
+        v.addEventListener("loadeddata", () => set("video", 0.5));
+        ["canplaythrough", "playing"].forEach((ev) => v.addEventListener(ev, () => set("video", 1)));
+        v.addEventListener("error", () => set("video", 1), true);
+        setTimeout(() => set("video", 1), 10000); // vídeo lento: não prende o site
+      },
+    };
+  })();
+
+  /* ---------------------------------------------------------------------
      Imagens em falta → bloco de reserva
      --------------------------------------------------------------------- */
   function watchImage(img) {
@@ -56,8 +108,6 @@
   const YT_ID = HV.youtube || "";
   const T0 = HV.trimStart ?? 10, T1 = HV.trimEnd ?? 10;
   let ytPlayer = null, ytReady = false, ytWanted = true, ytLooping = false, ytLastT = -1, ytStill = 0, ytGoodSince = 0;
-  if (HV.poster) heroMedia.style.setProperty("--poster", `url("${HV.poster}")`);
-  else if (YT_ID) heroMedia.style.setProperty("--poster", `url("https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg")`);
   const showVideo = (on) => heroFrame.classList.toggle("has-video", on);
 
   /* Vídeo alojado no próprio site (heroVideo.src): <video> nativo, sem botões nem
@@ -71,13 +121,13 @@
     v.muted = true; v.defaultMuted = true; v.playsInline = true; v.autoplay = true; v.loop = false;
     v.preload = "auto"; v.disablePictureInPicture = true;
     v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("aria-hidden", "true");
-    if (HV.poster) v.poster = HV.poster;
     (HV.sources || [{ src: VID_SRC, type: "video/mp4" }]).forEach((o) => {
       const s = document.createElement("source"); s.src = o.src; s.type = o.type || "video/mp4";
       if (o.media) s.media = o.media;
       v.appendChild(s);
     });
     $(".hero__yt").replaceWith(v);
+    LOADER.watchVideo(v);
     let wanted = true, looping = false;
     const play = () => { const p = v.play(); if (p) p.catch(() => {}); };
     v.addEventListener("loadedmetadata", () => { if (V0 && v.currentTime < V0) v.currentTime = V0; });
@@ -166,9 +216,8 @@
     const txt = row.textContent; row.textContent = "";
     [...txt].forEach((c) => { const s = document.createElement("span"); s.className = "ch"; s.style.setProperty("--i", ci++); s.textContent = c; row.appendChild(s); });
   });
-  const ready = () => requestAnimationFrame(() => document.body.classList.add("is-ready"));
-  (document.fonts && document.fonts.ready) ? document.fonts.ready.then(ready) : addEventListener("load", ready);
-  setTimeout(ready, 1800);
+  // o título só entra depois de o ecrã de carregamento sair
+  LOADER.onDone(() => requestAnimationFrame(() => document.body.classList.add("is-ready")));
 
   // frase do hero que muda de 3 em 3 segundos (só começa depois de o título e a frase entrarem)
   (function rotatePhrases() {
@@ -177,7 +226,7 @@
     let i = 0;
     box.firstElementChild.textContent = list[0];
     if (list.length < 2) return;
-    setTimeout(() => setInterval(() => {
+    LOADER.onDone(() => setTimeout(() => setInterval(() => {
       if (document.hidden || heroE > 0.6) return;
       i = (i + 1) % list.length;
       const old = box.firstElementChild;
@@ -188,7 +237,7 @@
       nu.classList.remove("is-enter");
       old.classList.add("is-leave");
       setTimeout(() => old.remove(), 950);
-    }, 3000), 2600);
+    }, 3000), 2600));
   })();
 
   let heroE = 0;

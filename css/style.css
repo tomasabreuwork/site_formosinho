@@ -47,6 +47,47 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 img, video { display: block; max-width: 100%; }
+
+/* =========================================================================
+   ECRÃ DE CARREGAMENTO — só sai quando o site está pronto
+   ========================================================================= */
+html.is-loading, html.is-loading body { overflow: hidden; }
+.loader {
+  position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center;
+  background: #1d1c16; color: var(--bone);
+  transition: opacity 0.9s var(--ease), visibility 0s linear 0.9s;
+  animation: loader-failsafe 0.9s var(--ease) 20s forwards; /* se o JavaScript falhar, sai sozinho */
+}
+@keyframes loader-failsafe { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+.loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader__inner { width: min(78vw, 420px); text-align: center; transition: transform 0.9s var(--ease); }
+.loader.is-done .loader__inner { transform: translateY(-14px); }
+.loader__kicker {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase;
+  color: rgba(235, 229, 215, 0.55);
+}
+.loader__mark {
+  margin: 0.5rem 0 1.6rem; font-family: var(--serif); font-weight: 400; line-height: 1;
+  font-size: clamp(2.6rem, 9vw, 4.4rem); letter-spacing: -0.01em;
+  animation: loader-breathe 2.4s ease-in-out infinite alternate;
+}
+.loader__mark i { font-style: italic; margin-left: 0.03em; }
+@keyframes loader-breathe { from { opacity: 0.55; } to { opacity: 1; } }
+.loader__bar { position: relative; height: 1px; background: rgba(235, 229, 215, 0.18); overflow: hidden; }
+.loader__fill {
+  position: absolute; inset: 0; background: var(--brass);
+  transform-origin: 0 50%; transform: scaleX(var(--p, 0)); transition: transform 0.35s linear;
+}
+.loader__meta {
+  display: flex; justify-content: space-between; margin-top: 0.8rem;
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(235, 229, 215, 0.55);
+}
+.loader__pct { font-variant-numeric: tabular-nums; color: var(--bone); }
+@media (prefers-reduced-motion: reduce) {
+  .loader__mark { animation: none; }
+  .loader, .loader__inner, .loader__fill { transition-duration: 0.01s; }
+}
 [hidden] { display: none !important; }
 a { color: inherit; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
@@ -181,15 +222,8 @@ em { font-style: italic; }
   clip-path: inset(var(--it, 0px) var(--ir, 0px) var(--ib, 0px) var(--il, 0px));
   will-change: clip-path;
 }
-/* camada de vídeo: imagem de capa por baixo + leitor do YouTube por cima */
+/* camada de vídeo (sem imagem de capa: o ecrã de carregamento cobre a espera) */
 .hero__media { position: absolute; inset: 0; transform: scale(var(--vs, 1.08)); transform-origin: 50% 45%; }
-.hero__media::before {
-  content: ""; position: absolute; inset: 0; transform: scale(1.16); /* corta as faixas pretas do vídeo */
-  background: var(--poster, none) center / cover no-repeat, url("../images/hero/poster.jpg") center / cover no-repeat;
-  filter: saturate(0.86) contrast(1.06) brightness(0.8);
-  animation: kenburns 28s ease-in-out infinite alternate;
-}
-@keyframes kenburns { to { transform: scale(1.26) translate(-1.5%, -1%); } }
 .hero__yt {
   position: absolute; left: 50%; top: 50%;
   width: calc(max(100vw, 177.78vh) * 1.2); height: calc(max(56.25vw, 100vh) * 1.2);

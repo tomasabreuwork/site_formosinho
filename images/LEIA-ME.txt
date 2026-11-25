@@ -9,15 +9,12 @@ Os créditos das imagens CC BY aparecem automaticamente no rodapé e em cada fic
 Quando trocar uma imagem, atualize ou remova o campo "credit" correspondente.
 
 VÍDEO DO TOPO (drone)
-  O vídeo é reproduzido a partir do YouTube (leitor oficial, sem som, em ciclo).
-  Para trocar de vídeo, mude o id em js/gallery-data.js → heroVideo.youtube
-  (o id é o que vem depois de "watch?v=" no endereço do YouTube).
-  images/hero/poster.jpg        imagem de reserva, se o YouTube estiver bloqueado
-  Se o cliente tiver o seu próprio vídeo (ou autorização do autor), pode ser
-  alojado diretamente no site — peça para adaptar.
+  O vídeo está alojado no site: videos/hero-1440.mp4 (computador) e
+  videos/hero-1080.mp4 (telemóvel). Configuração em js/gallery-data.js → heroVideo.
+  Não há imagem de capa: um ecrã de carregamento cobre o site até o vídeo estar pronto.
+  videos/hero-poster.jpg        só usada na pré-visualização ao partilhar o link
 
 ONDE ESTÁ CADA IMAGEM
-  images/hero/poster.jpg        capa do topo
   images/sobre/atelier.jpg      fotografia "pregada" na secção I (vertical 4:5)
   images/processo/01..05.jpg    as 5 figuras do Método (vertical)
   images/galeria/*.jpg          peças do Catálogo

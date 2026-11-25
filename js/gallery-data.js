@@ -22,7 +22,6 @@ window.FORMOSINHO = {
      TOPO · vídeo de drone.
      src: caminho de um MP4 alojado no site (ex. "videos/hero.mp4"). Quando existe,
           tem prioridade e o YouTube deixa de ser usado (sem botão de play, sem falhas).
-     poster (opcional): imagem mostrada enquanto o vídeo carrega.
      youtube: id do YouTube, usado só quando não há "src".
      trimStart / trimEnd: segundos cortados no início e no fim (o ciclo salta-os).
      ----------------------------------------------------------------------- */
@@ -32,7 +31,6 @@ window.FORMOSINHO = {
       { src: "videos/hero-1080.mp4", media: "(max-width: 820px)" }, // telemóvel
       { src: "videos/hero-1440.mp4" }                                // computador
     ],
-    poster: "videos/hero-poster.jpg",
     youtube: "Ok_qDnM7SiU",
     trimStart: 10,
     trimEnd: 10,
