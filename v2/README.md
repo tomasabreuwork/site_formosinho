@@ -38,6 +38,19 @@ npm install
 npm run build      # gera v2/dist, já com o endereço /site_formosinho/v2/
 ```
 
+## Rever um momento exato
+
+Acrescente ao endereço:
+
+| Parâmetro        | O que faz                                                        |
+| ---------------- | ---------------------------------------------------------------- |
+| `?cena=1&p=0.27` | fixa a cena II a 27 % (sem scroll) — a cena I é `cena=0`         |
+| `?vh=250`        | abre a página nesse ponto do scroll (em % da altura do ecrã)     |
+| `&debug`         | mostra no título da página o que o 3D está a desenhar            |
+| `&snap`          | põe o fotograma 3D como imagem (para capturas automáticas)       |
+
+Capturas da revisão: [`capturas/`](capturas/README.md).
+
 ## Cenas
 
 - [x] I · Abertura

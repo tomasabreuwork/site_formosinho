@@ -153,7 +153,7 @@ export async function createStage({ canvas, video, mobile, piece }) {
     const g = new THREE.Group();
     g.add(plinth(wood, darkWood, brass));
     g.add(new THREE.Mesh(frameGeo, brass));
-    g.position.set(3.9 * s, 0, -2.8); g.rotation.y = -0.42 * s;
+    g.position.set(4.6 * s, 0, -2.9); g.rotation.y = -0.5 * s;
     scene.add(g);
   }
 
