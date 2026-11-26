@@ -489,7 +489,9 @@ em { font-style: italic; }
 .drawer__side { position: absolute; top: 0; width: calc(var(--dh) * 1.15); height: 100%; background: linear-gradient(90deg, #3a2516, #5a3a22); }
 .drawer__side--l { left: 0; transform-origin: 0 50%; transform: rotateY(90deg); }
 .drawer__side--r { right: 0; transform-origin: 100% 50%; transform: rotateY(-90deg); }
-.cabinet__plinth { height: 26px; margin: 0 -10px; background: linear-gradient(180deg, #24170e, #120b06); transform: translateY(-2px); box-shadow: 0 30px 40px -20px rgba(0,0,0,.8); }
+/* rodapé do armário: dentro do espaço 3D das gavetas, para que uma gaveta aberta fique à frente dele */
+.cabinet__body::after { content: ""; position: absolute; left: -10px; right: -10px; top: calc(100% - 2px); height: 26px; background: linear-gradient(180deg, #24170e, #120b06); box-shadow: 0 30px 40px -20px rgba(0,0,0,.8); pointer-events: none; }
+.cabinet__stage { padding-bottom: 24px; }
 
 /* =========================================================================
    V · DETALHE (LUPA)

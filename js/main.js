@@ -847,7 +847,9 @@
       caseEl.classList.remove("is-live");
       const my = ++token;
       client.init(MODELS[i].uid, {
-        autostart: 1, preload: 1, autospin: RM ? 0 : (T.autospin ?? 0.18), camera: 0, dnt: 1, scrollwheel: 0, transparent: 1,
+        autostart: 1, preload: 1, autospin: RM ? 0 : (T.autospin ?? 0.18), camera: 0, dnt: 1, transparent: 1,
+        // computador: a roda do rato sobre a peça faz zoom (fora dela desce a página); telemóvel: pinça
+        scrollwheel: matchMedia("(pointer: fine)").matches ? 1 : 0,
         ui_theme: "dark", ui_infos: 0, ui_controls: 0, ui_stop: 0, ui_inspector: 0, ui_settings: 0, ui_help: 0, ui_vr: 0, ui_ar: 0,
         ui_ar_help: 0, ui_ar_qrcode: 0, ui_fullscreen: 0, ui_annotations: 0, ui_hint: 2, ui_watermark: 0, ui_watermark_link: 0,
         success: (api) => {
