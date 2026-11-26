@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Formosinho — Do habitat à vitrine · versão 2</title>
+  <meta name="description" content="Formosinho: taxidermia de autor e gabinete de história natural. Versão experimental em 3D." />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#0f0e0c" />
+
+  <!-- tipos de letra da versão 1 (alojados no site) -->
+  <link rel="stylesheet" href="../css/fonts.css" />
+  <link rel="stylesheet" href="src/style.css" />
+
+  <!-- Bibliotecas: o browser carrega-as diretamente (sem compilação).
+       Com Vite (npm run build) estes nomes são resolvidos a partir de node_modules. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+      "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js",
+      "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js",
+      "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.mjs"
+    }
+  }
+  </script>
+  <script>document.documentElement.classList.replace("no-js", "js");</script>
+  <script type="module" src="src/main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#depois">Saltar a apresentação</a>
+
+  <header class="nav">
+    <a class="nav__brand" href="./" aria-label="Formosinho — início">Formo<i>sinho</i></a>
+    <p class="nav__scene" aria-hidden="true"><span class="nav__num">I</span><span class="nav__label">Abertura</span></p>
+    <a class="nav__v1" href="../" title="Voltar à versão 1 do site">V1</a>
+  </header>
+
+  <!-- Palco fixo: vídeo (habitat) + canvas 3D + fios das etiquetas. Decorativo: o texto está nos cartões. -->
+  <div class="stage" aria-hidden="true">
+    <video class="stage__video" muted playsinline loop preload="auto"></video>
+    <canvas class="stage__canvas"></canvas>
+    <svg class="stage__lines" width="100%" height="100%">
+      <path class="leader" d="M0 0" />
+      <circle class="leader__dot" r="3.5" cx="-20" cy="-20" />
+    </svg>
+    <div class="stage__vignette"></div>
+    <div class="stage__grain"></div>
+  </div>
+
+  <!-- régua de progresso (como a da versão 1), com uma marca por cena -->
+  <div class="rule" aria-hidden="true"><span class="rule__fill"></span></div>
+
+  <main>
+    <!-- ============ I · ABERTURA ============ -->
+    <section class="scene scene--open" id="abertura" data-scene="0" data-num="I" data-label="Abertura" aria-labelledby="t-abertura">
+      <header class="opening">
+        <p class="kicker">Formosinho · taxidermia &amp; história natural</p>
+        <h1 class="opening__title" id="t-abertura">Do habitat <em>à vitrine</em></h1>
+        <p class="opening__hint"><span></span>Desça devagar</p>
+      </header>
+
+      <article class="card" data-from="0.62" data-to="1.01">
+        <p class="card__no">I · Abertura</p>
+        <h2 class="card__title">Cada peça começa no campo</h2>
+        <p>Cada peça começa no campo e não na bancada. Medimos, fotografamos, observamos o habitat. Só depois se esculpe o corpo, músculo a músculo, e se monta a pele com técnicas de conservação de nível museológico.</p>
+        <figure class="card__still"><img src="../videos/hero-poster.jpg" alt="Vista aérea de Mértola e do rio" loading="lazy" /></figure>
+      </article>
+    </section>
+
+    <!-- ============ II · EM VOLTA ============ -->
+    <section class="scene scene--orbit" id="em-volta" data-scene="1" data-num="II" data-label="Em volta" aria-labelledby="t-volta">
+      <article class="card card--intro" data-from="0" data-to="0.13">
+        <p class="card__no">II · Em volta</p>
+        <h2 class="card__title" id="t-volta">Uma montagem vê-se de todos os ângulos</h2>
+        <p class="card__piece"><span data-f="name">—</span> · <i data-f="sci">—</i></p>
+        <p class="card__note">Peça representada por um estudo geométrico provisório, até haver a digitalização de uma peça do atelier.</p>
+      </article>
+      <!-- as notas da peça são geradas a partir de js/gallery-data.js (turn3d) -->
+      <ol class="notes" id="notes"></ol>
+    </section>
+
+    <!-- ============ DEPOIS DAS CENAS ============ -->
+    <section class="after" id="depois" tabindex="-1">
+      <div class="after__inner">
+        <p class="kicker">Versão 2 · em construção</p>
+        <h2 class="after__title">As próximas cenas estão <em>na bancada</em></h2>
+        <ol class="after__list">
+          <li><span>III</span> Por dentro</li>
+          <li><span>IV</span> Método</li>
+          <li><span>V</span> Detalhe</li>
+          <li><span>VI</span> Gavetas</li>
+          <li><span>VII</span> Final</li>
+        </ol>
+        <a class="after__link" href="../">Ver a versão 1 do site <span aria-hidden="true">→</span></a>
+        <p class="after__credit" id="credit"></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

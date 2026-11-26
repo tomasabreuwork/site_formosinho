@@ -1,0 +1,20 @@
+{
+  "name": "formosinho-v2",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Formosinho — versão 2 (scrollytelling 3D). Gerada com Vite e publicada em /site_formosinho/v2/.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.18",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.11"
+  }
+}
