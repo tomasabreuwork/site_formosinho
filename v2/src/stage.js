@@ -160,7 +160,7 @@ export async function createStage({ canvas, video, mobile, piece }) {
   // chão, parede verde ao fundo e poça de luz
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ color: 0x17130f, roughness: 0.92 }));
   floor.rotation.x = -Math.PI / 2; floor.position.y = -0.44; floor.receiveShadow = true;
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(40, 12), new THREE.MeshStandardMaterial({ color: 0x1d2c25, roughness: 1 }));
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(40, 12), new THREE.MeshStandardMaterial({ color: 0x142019, roughness: 1 }));
   wall.position.set(0, 5, -3.4);
   const glowMat = new THREE.MeshBasicMaterial({ map: glowTexture(), color: 0xffd8a8, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
   const glow = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.0), glowMat);
@@ -339,7 +339,9 @@ export async function createStage({ canvas, video, mobile, piece }) {
     } else if (!b && !video.paused) video.pause();
   };
 
+  let lastTime = 0;
   function update({ p0, p1 }, time) {
+    const dt = clamp(time - lastTime, 0, 0.1); lastTime = time;
     const orbit = p1 > 0;
 
     // luz
@@ -358,7 +360,7 @@ export async function createStage({ canvas, video, mobile, piece }) {
     // habitat → diorama
     const g = orbit ? 1 : seg(p0, OPEN.grade);
     if (panelMat.map !== vtex && hasFrames()) { panelMat.map = vtex; fitVideo(); }
-    ready += ((panelMat.map === vtex ? (hasFrames() ? 1 : 0) : 1) - ready) * 0.05;
+    ready += ((panelMat.map === vtex ? (hasFrames() ? 1 : 0) : 1) - ready) * (1 - Math.exp(-dt * 2.5));
     grade.uReady.value = ready;
     grade.uSat.value = 1 - 0.7 * g; grade.uSepia.value = 0.8 * g; grade.uBright.value = 1 - 0.36 * g; grade.uVig.value = g;
 
