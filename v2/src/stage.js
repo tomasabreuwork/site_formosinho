@@ -373,6 +373,9 @@ export async function createStage({ canvas, video, mobile, piece }) {
     let k, mark = { at: -1, dwell: 0 };
     if (orbit) { k = 1; mark = shotOrbit(p1); } else k = shotOpen(p0);
     camera.position.copy(pos); camera.lookAt(look);
+    // o nevoeiro acompanha a câmara: o resto da sala fica sempre na penumbra
+    const camDist = pos.distanceTo(CENTER);
+    scene.fog.near = camDist + 0.8; scene.fog.far = camDist + 6.5;
     camera.setViewOffset(L.W, L.H, -L.shiftX * L.W * k, L.shiftY * L.H * k, L.W, L.H);
 
     // anel no ponto anotado

@@ -55,6 +55,7 @@ function heartShape() {
 export function buildPlaceholder({ name, sci, mobile }) {
   const root = new THREE.Group();
   root.name = "Peca";
+  const LIFT = 0.05; // a ave fica acima do ramo, com as patas e as garras à vista
 
   // ---------- materiais
   const wood = new THREE.MeshStandardMaterial({ map: woodTexture(), color: 0xffffff, roughness: 0.55, metalness: 0 });
@@ -86,60 +87,68 @@ export function buildPlaceholder({ name, sci, mobile }) {
 
   // ---------- Peca_Armacao: arame (coluna até à cabeça + pernas)
   const arm = new THREE.Group(); arm.name = "Peca_Armacao";
-  const spine = new THREE.CatmullRomCurve3([V(0, 0.05, -0.02), V(0.01, 0.2, -0.01), V(0, 0.38, 0.0), V(0, 0.55, 0.01), V(0, 0.69, 0.02)]);
+  const spine = new THREE.CatmullRomCurve3([V(0, 0.05, -0.02), V(0.01, 0.2, -0.01), V(0, 0.43, 0.0), V(0, 0.6, 0.01), V(0, 0.74, 0.02)]);
   arm.add(new THREE.Mesh(new THREE.TubeGeometry(spine, 40, 0.0045, 6), brassWire));
   for (const s of [-1, 1]) {
-    const leg = new THREE.CatmullRomCurve3([V(0.045 * s, 0.205, 0.02), V(0.05 * s, 0.27, 0.0), V(0.02 * s, 0.34, -0.01)]);
+    const leg = new THREE.CatmullRomCurve3([V(0.045 * s, 0.205, 0.02), V(0.05 * s, 0.3, 0.0), V(0.02 * s, 0.39, -0.01)]);
     arm.add(new THREE.Mesh(new THREE.TubeGeometry(leg, 16, 0.0035, 6), brassWire));
   }
   root.add(arm);
 
   // ---------- Peca_Corpo: corpo esculpido (ligeiramente mais pequeno do que a pele)
   const body = new THREE.Group(); body.name = "Peca_Corpo";
-  body.add(new THREE.Mesh(latheBody(0.93), clay));
-  const headCore = new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 24), clay);
-  headCore.scale.set(1, 0.92, 0.86); headCore.position.set(0, 0.665, 0.0); body.add(headCore);
+  const core = new THREE.Mesh(latheBody(0.93), clay); core.position.y = LIFT; body.add(core);
+  const headCore = new THREE.Mesh(new THREE.SphereGeometry(0.11, 32, 24), clay);
+  headCore.scale.set(1.04, 0.88, 0.82); headCore.position.set(0, 0.665 + LIFT, -0.005); body.add(headCore);
   root.add(body);
 
-  // ---------- Peca_Pele: penas, cabeça, disco facial, bico, asas, cauda, garras
+  // ---------- Peca_Pele: penas, cabeça, disco facial, bico, asas, cauda, patas e garras
   const skin = new THREE.Group(); skin.name = "Peca_Pele";
-  const torso = new THREE.Mesh(latheBody(1), featherPale); skin.add(torso);
+  const torso = new THREE.Mesh(latheBody(1), featherPale); torso.position.y = LIFT; skin.add(torso);
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.122, 48, 36), featherGold);
-  head.scale.set(1.06, 0.88, 0.84); head.position.set(0, 0.665, -0.005); skin.add(head);
-  const discGeo = new THREE.ExtrudeGeometry(heartShape(), { depth: 0.012, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.006, bevelSegments: 4, curveSegments: 40 });
-  const disc = new THREE.Mesh(discGeo, face); disc.scale.setScalar(1.05); disc.position.set(0, 0.665, 0.086); disc.rotation.x = -0.08; skin.add(disc);
-  const rim = new THREE.Mesh(new THREE.ExtrudeGeometry(heartShape(), { depth: 0.006, bevelEnabled: false, curveSegments: 40 }), faceRim);
-  rim.scale.setScalar(1.11); rim.position.set(0, 0.665, 0.082); rim.rotation.x = -0.08; skin.add(rim);
+  head.scale.set(1.06, 0.88, 0.84); head.position.set(0, 0.665 + LIFT, -0.005); skin.add(head);
+  // disco facial: coração com rebordo arredondado e curvo, a envolver a cabeça
+  const bend = (geo, k) => {
+    const p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) p.setZ(i, p.getZ(i) - k * p.getX(i) * p.getX(i) - k * 0.35 * Math.max(0, p.getY(i)) ** 2);
+    geo.computeVertexNormals(); return geo;
+  };
+  const discGeo = bend(new THREE.ExtrudeGeometry(heartShape(), { depth: 0.01, bevelEnabled: true, bevelThickness: 0.011, bevelSize: 0.01, bevelSegments: 6, curveSegments: 48 }), 2.6);
+  const disc = new THREE.Mesh(discGeo, face); disc.scale.setScalar(1.04); disc.position.set(0, 0.665 + LIFT, 0.084); disc.rotation.x = -0.08; skin.add(disc);
+  const rimGeo = bend(new THREE.ExtrudeGeometry(heartShape(), { depth: 0.006, bevelEnabled: true, bevelThickness: 0.004, bevelSize: 0.004, bevelSegments: 3, curveSegments: 48 }), 2.6);
+  const rim = new THREE.Mesh(rimGeo, faceRim); rim.scale.setScalar(1.11); rim.position.set(0, 0.665 + LIFT, 0.08); rim.rotation.x = -0.08; skin.add(rim);
   // crista ao meio do disco facial, dos olhos até ao bico
   const crest = new THREE.Mesh(new THREE.CapsuleGeometry(0.0065, 0.045, 6, 12), ridge);
-  crest.position.set(0, 0.676, 0.107); crest.rotation.x = -0.08; skin.add(crest);
+  crest.position.set(0, 0.676 + LIFT, 0.107); crest.rotation.x = -0.08; skin.add(crest);
   const beak = new THREE.Mesh(new THREE.ConeGeometry(0.011, 0.04, 12), keratin);
-  beak.position.set(0, 0.645, 0.112); beak.rotation.x = Math.PI - 0.55; skin.add(beak);
+  beak.position.set(0, 0.645 + LIFT, 0.112); beak.rotation.x = Math.PI - 0.55; skin.add(beak);
   const wingGeo = wingGeometry();
   for (const s of [-1, 1]) {
     const wing = new THREE.Mesh(wingGeo, featherGold);
-    wing.scale.set(0.042, 0.21, 0.125); wing.position.set(0.118 * s, 0.37, -0.035); wing.rotation.set(0.2, 0.3 * s, -0.05 * s); skin.add(wing);
-    // garras: três dedos sobre o ramo
-    for (let k = 0; k < 3; k++) {
-      const toe = new THREE.Mesh(new THREE.ConeGeometry(0.007, 0.045, 8), claw);
-      toe.position.set(0.045 * s + (k - 1) * 0.016, 0.228, 0.03);
-      toe.rotation.set(Math.PI / 2 + 0.5, 0, (k - 1) * 0.35); skin.add(toe);
+    wing.scale.set(0.042, 0.21, 0.125); wing.position.set(0.118 * s, 0.37 + LIFT, -0.035); wing.rotation.set(0.2, 0.3 * s, -0.05 * s); skin.add(wing);
+    // pata emplumada, do corpo até ao ramo
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.017, 0.075, 12), featherPale);
+    leg.position.set(0.045 * s, 0.258, 0.018); skin.add(leg);
+    // garras: três dedos à frente do ramo e um atrás
+    for (let k = 0; k < 4; k++) {
+      const back = k === 3;
+      const toe = new THREE.Mesh(new THREE.ConeGeometry(0.0065, 0.048, 8), claw);
+      toe.position.set(0.045 * s + (back ? 0 : (k - 1) * 0.016), 0.226, back ? -0.012 : 0.034);
+      toe.rotation.set(back ? -(Math.PI / 2 + 0.6) : Math.PI / 2 + 0.55, 0, back ? 0 : (k - 1) * 0.35); skin.add(toe);
     }
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.016, 0.05, 10), featherPale);
-    leg.position.set(0.045 * s, 0.245, 0.015); skin.add(leg);
   }
   const tail = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.09, 0.02), featherGold);
-  tail.position.set(0, 0.23, -0.11); tail.rotation.x = 0.35; skin.add(tail);
+  tail.position.set(0, 0.23 + LIFT, -0.11); tail.rotation.x = 0.35; skin.add(tail);
   root.add(skin);
 
   // ---------- Peca_Olho_E / Peca_Olho_D: olhos de vidro
   for (const [n, s] of [["Peca_Olho_E", 1], ["Peca_Olho_D", -1]]) {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.0155, 24, 16), glass);
-    eye.name = n; eye.position.set(0.036 * s, 0.684, 0.104); root.add(eye);
+    eye.name = n; eye.position.set(0.036 * s, 0.684 + LIFT, 0.104); root.add(eye);
   }
 
   // ---------- pontos das notas (por ordem do gallery-data.js: disco facial, voo, garras, etiqueta)
-  [V(0, 0.69, 0.12), V(0.162, 0.42, -0.02), V(0.03, 0.225, 0.05), V(-0.05, 0.03, 0.235)].forEach((p, i) => {
+  [V(0, 0.69 + LIFT, 0.12), V(0.162, 0.42 + LIFT, -0.02), V(0.045, 0.228, 0.055), V(-0.05, 0.03, 0.235)].forEach((p, i) => {
     const o = new THREE.Object3D(); o.name = `Nota_${i + 1}`; o.position.copy(p); root.add(o);
   });
 

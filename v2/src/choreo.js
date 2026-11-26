@@ -20,10 +20,10 @@ export const ORBIT = {
   hood: [0, 0.1],
   intro: [0, 0.13],
   stops: [
-    { travel: [0.06, 0.2], dwell: [0.2, 0.34], az: 14, el: 6, r: 0.92, aim: 0.6 },
-    { travel: [0.34, 0.43], dwell: [0.43, 0.56], az: 98, el: 14, r: 0.96, aim: 0.55 },
-    { travel: [0.56, 0.69], dwell: [0.69, 0.81], az: 328, el: -3, r: 0.84, aim: 0.7, bump: 0.6 },
-    { travel: [0.81, 0.87], dwell: [0.87, 1.0], az: 382, el: 26, r: 0.8, aim: 0.8 },
+    { travel: [0.06, 0.2], dwell: [0.2, 0.34], az: 14, el: 7, r: 1.4, aim: 0.5 },
+    { travel: [0.34, 0.43], dwell: [0.43, 0.56], az: 98, el: 14, r: 1.5, aim: 0.45 },
+    { travel: [0.56, 0.69], dwell: [0.69, 0.81], az: 328, el: 4, r: 1.25, aim: 0.6, bump: 0.6 },
+    { travel: [0.81, 0.87], dwell: [0.87, 1.0], az: 382, el: 24, r: 1.15, aim: 0.65 },
   ],
 };
 

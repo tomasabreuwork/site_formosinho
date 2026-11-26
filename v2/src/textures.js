@@ -21,13 +21,18 @@ const rng = (seed = 7) => () => ((seed = (seed * 16807) % 2147483647) - 1) / 214
 /* Penas em escama: filas de meias-luas desencontradas, com ráquis e salpicos. */
 export function featherTexture({ base = "#c9a066", edge = "#8a6436", fleck = "#5d5a55", light = "#e9d7b4", size = 512, rows = 14, seed = 3, repeat = [2, 2] } = {}) {
   const [c, g] = canvas(size);
-  const r = rng(seed);
   g.fillStyle = base; g.fillRect(0, 0, size, size);
-  const step = size / rows, rad = step * 0.78;
-  for (let row = rows + 1; row >= -1; row--) {
-    for (let col = -1; col <= rows + 1; col++) {
+  // grelha que fecha nas duas direções (número par de filas), para a textura se repetir sem costuras
+  const cols = rows, step = size / cols;
+  let rowsY = Math.round(size / (step * 0.82)); if (rowsY % 2) rowsY++;
+  const stepY = size / rowsY, rad = step * 0.78;
+  const hash = (a, b, k) => { const n = Math.sin(a * 127.1 + b * 311.7 + k * 74.7 + seed * 13.3) * 43758.5453; return n - Math.floor(n); };
+  for (let row = rowsY + 1; row >= -1; row--) {
+    for (let col = -1; col <= cols + 1; col++) {
+      const cx = ((col % cols) + cols) % cols, cy = ((row % rowsY) + rowsY) % rowsY;
+      const r = (() => { let k = 0; return () => hash(cx, cy, k++); })(); // aleatório fixo por célula
       const x = col * step + (row % 2 ? step / 2 : 0) + (r() - 0.5) * step * 0.18;
-      const y = row * step * 0.82;
+      const y = row * stepY;
       const grd = g.createRadialGradient(x, y - rad * 0.2, rad * 0.1, x, y, rad);
       grd.addColorStop(0, light); grd.addColorStop(0.55, base); grd.addColorStop(1, edge);
       g.fillStyle = grd;
@@ -58,17 +63,22 @@ export function woodTexture({ base = "#3b2515", dark = "#24150b", light = "#5a3a
   return tex(c, { repeat: [1, 1] });
 }
 
-/* Casca de ramo: estrias verticais irregulares. */
-export function barkTexture({ size = 256, seed = 5 } = {}) {
+/* Casca de ramo: estrias finas e onduladas, ao longo do ramo. */
+export function barkTexture({ size = 512, seed = 5 } = {}) {
   const [c, g] = canvas(size);
   const r = rng(seed);
-  g.fillStyle = "#4a3624"; g.fillRect(0, 0, size, size);
-  for (let i = 0; i < 160; i++) {
-    const x = r() * size, w = 1 + r() * 4, h = 20 + r() * 90, y = r() * size;
-    g.fillStyle = r() < 0.5 ? "rgba(25,16,8,.55)" : "rgba(120,96,70,.35)";
-    g.fillRect(x, y, w, h);
+  g.fillStyle = "#4b3725"; g.fillRect(0, 0, size, size);
+  g.lineCap = "round";
+  for (let i = 0; i < 420; i++) {
+    const x0 = r() * size, amp = 2 + r() * 5, f = 0.01 + r() * 0.03, ph = r() * 6.28;
+    const y0 = r() * size, len = 40 + r() * 200;
+    g.strokeStyle = r() < 0.55 ? `rgba(28,18,10,${0.25 + r() * 0.35})` : `rgba(128,102,76,${0.15 + r() * 0.25})`;
+    g.lineWidth = 0.8 + r() * 2.6;
+    g.beginPath();
+    for (let y = 0; y <= len; y += 6) { const x = x0 + Math.sin((y0 + y) * f + ph) * amp; y ? g.lineTo(x, y0 + y) : g.moveTo(x, y0 + y); }
+    g.stroke();
   }
-  return tex(c, { repeat: [1, 3] });
+  return tex(c, { repeat: [1, 2] });
 }
 
 /* Etiqueta de coleção em papel, escrita à mão. O número fica em branco:
