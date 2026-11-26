@@ -150,6 +150,7 @@ function runCinema() {
       stage.update({ p0: sm[0], p1: sm[1] }, gsap.ticker.time);
       requestAnimationFrame(() => html.classList.add("is-3d"));
       new ResizeObserver(() => stage.layout()).observe($(".stage__canvas"));
+      if (qs.has("debug")) setInterval(() => { document.title = "DBG " + JSON.stringify(stage.probe()); }, 1000);
     } catch (e) {
       console.warn("[Formosinho v2] 3D indisponível:", e); // fica o vídeo e o texto
     }

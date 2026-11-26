@@ -393,8 +393,16 @@ export async function createStage({ canvas, video, mobile, piece }) {
 
   function setActive(b) { active = b; if (!b) wantsVideo(false); }
 
+  // diagnóstico (?debug): o que foi desenhado e a cor do píxel central
+  function probe() {
+    renderer.render(scene, camera);
+    const gl = renderer.getContext(), px = new Uint8Array(4);
+    gl.readPixels(gl.drawingBufferWidth >> 1, gl.drawingBufferHeight >> 1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    return { calls: renderer.info.render.calls, tris: renderer.info.render.triangles, w: gl.drawingBufferWidth, h: gl.drawingBufferHeight, px: Array.from(px), video: video.readyState, map: panelMat.map === vtex ? "video" : "poster", cam: camera.position.toArray().map((v) => +v.toFixed(2)) };
+  }
+
   // compila os shaders antes de mostrar (evita um engasgo no primeiro scroll)
   renderer.compile(scene, camera);
 
-  return { update, project, layout, setActive, renderer };
+  return { update, project, layout, setActive, probe, renderer };
 }
