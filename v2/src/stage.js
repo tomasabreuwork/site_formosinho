@@ -104,19 +104,19 @@ export async function createStage({ canvas, video, mobile, piece }) {
   const vtex = new THREE.VideoTexture(video);
   vtex.colorSpace = THREE.SRGBColorSpace;
   vtex.minFilter = THREE.LinearFilter; vtex.magFilter = THREE.LinearFilter; vtex.generateMipmaps = false;
-  const grade = { uSat: { value: 1 }, uSepia: { value: 0 }, uBright: { value: 1 }, uVig: { value: 0 }, uRep: { value: new THREE.Vector2(1, 1) } };
+  const grade = { uSat: { value: 1 }, uSepia: { value: 0 }, uBright: { value: 1 }, uVig: { value: 0 }, uReady: { value: 0 }, uRep: { value: new THREE.Vector2(1, 1) } };
   const panelMat = new THREE.MeshBasicMaterial({ map: vtex, toneMapped: false, fog: false });
   panelMat.onBeforeCompile = (sh) => {
     Object.assign(sh.uniforms, grade);
     sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", "#include <common>\nuniform float uSat; uniform float uSepia; uniform float uBright; uniform float uVig; uniform vec2 uRep;")
+      .replace("#include <common>", "#include <common>\nuniform float uSat; uniform float uSepia; uniform float uBright; uniform float uVig; uniform float uReady; uniform vec2 uRep;")
       .replace("#include <map_fragment>", `#include <map_fragment>
         float lum = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
         vec3 graded = mix(vec3(lum), diffuseColor.rgb, uSat);
         graded = mix(graded, vec3(lum) * vec3(1.16, 0.97, 0.72), uSepia);
         vec2 q = (vMapUv - 0.5) / uRep;
         float vig = smoothstep(0.78, 0.18, length(q * vec2(1.0, 1.25)));
-        graded *= uBright * mix(1.0, 0.35 + 0.65 * vig, uVig);
+        graded *= uReady * uBright * mix(1.0, 0.35 + 0.65 * vig, uVig);
         diffuseColor.rgb = graded;`);
   };
   const panel = new THREE.Mesh(new THREE.PlaneGeometry(CASE.w, CASE.h), panelMat);
@@ -125,15 +125,28 @@ export async function createStage({ canvas, video, mobile, piece }) {
   vitrine.add(hood);
   scene.add(vitrine);
 
-  // recorte "cover" do vídeo no fundo (proporção do vídeo ≠ proporção do fundo)
-  const fitVideo = () => {
-    const va = (video.videoWidth || 16) / (video.videoHeight || 9), pa = CASE.w / CASE.h;
+  // recorte "cover" da imagem no fundo (proporção do vídeo ≠ proporção do fundo)
+  const fit = (t, va) => {
+    const pa = CASE.w / CASE.h;
     const rx = va > pa ? pa / va : 1, ry = va > pa ? 1 : va / pa;
-    vtex.repeat.set(rx, ry); vtex.offset.set((1 - rx) / 2, (1 - ry) / 2);
-    grade.uRep.value.set(rx, ry);
+    t.repeat.set(rx, ry); t.offset.set((1 - rx) / 2, (1 - ry) / 2);
+    if (panelMat.map === t) grade.uRep.value.set(rx, ry);
   };
+  const fitVideo = () => fit(vtex, (video.videoWidth || 16) / (video.videoHeight || 9));
   fitVideo();
   video.addEventListener("loadedmetadata", fitVideo);
+
+  // o fundo acende quando o vídeo tem imagem; se não arrancar (ex.: poupança de energia
+  // no telemóvel), usa um fotograma do mesmo vídeo e troca para o vídeo quando ele arrancar
+  const hasFrames = () => video.readyState >= 2 && !video.error;
+  let ready = 0;
+  setTimeout(() => {
+    if (hasFrames()) return;
+    new THREE.TextureLoader().load("../videos/hero-poster.jpg", (t) => {
+      t.colorSpace = THREE.SRGBColorSpace;
+      if (!hasFrames()) { panelMat.map = t; fit(t, t.image.width / t.image.height); }
+    });
+  }, 2500);
 
   // outras vitrines na penumbra: a sala continua para lá da luz
   for (const s of [-1, 1]) {
@@ -342,6 +355,9 @@ export async function createStage({ canvas, video, mobile, piece }) {
 
     // habitat → diorama
     const g = orbit ? 1 : seg(p0, OPEN.grade);
+    if (panelMat.map !== vtex && hasFrames()) { panelMat.map = vtex; fitVideo(); }
+    ready += ((panelMat.map === vtex ? (hasFrames() ? 1 : 0) : 1) - ready) * 0.05;
+    grade.uReady.value = ready;
     grade.uSat.value = 1 - 0.7 * g; grade.uSepia.value = 0.8 * g; grade.uBright.value = 1 - 0.36 * g; grade.uVig.value = g;
 
     // a peça surge

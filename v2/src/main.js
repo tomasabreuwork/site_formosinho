@@ -93,6 +93,10 @@ function runCinema() {
     onUpdate: (st) => { raw[i] = st.progress; }, onRefresh: (st) => { raw[i] = st.progress; },
   }));
 
+  // ?vh=250 abre a página nesse ponto do scroll (em % da altura do ecrã) — útil para rever uma cena
+  const jump = new URLSearchParams(location.search).get("vh");
+  if (jump) lenis.scrollTo((parseFloat(jump) || 0) * window.innerHeight / 100, { immediate: true, force: true });
+
   const groups = scenes.map((s) => $$("[data-from]", s));
   const num = $(".nav__num"), label = $(".nav__label"), rule = $(".rule"), after = $("#depois");
   const path = $(".leader"), dot = $(".leader__dot");
