@@ -19,7 +19,7 @@ const tex = (c, { repeat = [1, 1], srgb = true } = {}) => {
 const rng = (seed = 7) => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 
 /* Penas em escama: filas de meias-luas desencontradas, com ráquis e salpicos. */
-export function featherTexture({ base = "#c9a066", edge = "#8a6436", fleck = "#5d5a55", light = "#e9d7b4", size = 512, rows = 14, seed = 3 } = {}) {
+export function featherTexture({ base = "#c9a066", edge = "#8a6436", fleck = "#5d5a55", light = "#e9d7b4", size = 512, rows = 14, seed = 3, repeat = [2, 2] } = {}) {
   const [c, g] = canvas(size);
   const r = rng(seed);
   g.fillStyle = base; g.fillRect(0, 0, size, size);
@@ -39,7 +39,7 @@ export function featherTexture({ base = "#c9a066", edge = "#8a6436", fleck = "#5
       if (r() < 0.55) { g.fillStyle = fleck; g.beginPath(); g.arc(x + (r() - 0.5) * rad * 0.6, y + rad * (0.45 + r() * 0.3), 1.2 + r() * 1.8, 0, Math.PI * 2); g.fill(); }
     }
   }
-  return tex(c, { repeat: [2, 2] });
+  return tex(c, { repeat });
 }
 
 /* Madeira de nogueira: veios ondulados. */

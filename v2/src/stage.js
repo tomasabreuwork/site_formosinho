@@ -73,8 +73,8 @@ export async function createStage({ canvas, video, mobile, piece }) {
   const darkWood = new THREE.MeshStandardMaterial({ color: 0x1c120a, roughness: 0.45 });
   const brass = new THREE.MeshStandardMaterial({ color: 0xb08d57, metalness: 0.88, roughness: 0.3 });
   const baize = new THREE.MeshStandardMaterial({ color: 0x1d2c25, roughness: 0.95 }); // verde de museu (v1)
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.04, metalness: 0, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false });
-  glass.userData.envBase = 2.2;
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0xfff3e0, roughness: 0.03, metalness: 0, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false });
+  glass.userData.envBase = 1.1;
 
   // ------------------------------------------------------------ vitrine principal
   const vitrine = new THREE.Group(); vitrine.name = "Vitrine";
@@ -153,7 +153,7 @@ export async function createStage({ canvas, video, mobile, piece }) {
     const g = new THREE.Group();
     g.add(plinth(wood, darkWood, brass));
     g.add(new THREE.Mesh(frameGeo, brass));
-    g.position.set(3.3 * s, 0, -1.9); g.rotation.y = -0.42 * s;
+    g.position.set(3.9 * s, 0, -2.8); g.rotation.y = -0.42 * s;
     scene.add(g);
   }
 
@@ -271,7 +271,9 @@ export async function createStage({ canvas, video, mobile, piece }) {
     // onde fica a peça no ecrã: à direita do cartão (computador) ou na metade de cima (telemóvel)
     const fracW = narrow ? 0.92 : 0.56, fracH = narrow ? 0.5 : 0.8;
     L.shiftX = narrow ? 0 : 0.19; L.shiftY = narrow ? 0.17 : 0;
-    L.dWide = Math.max(1.62 / (2 * tan * fracH), 2.0 / (2 * tan * camera.aspect * fracW));
+    L.dWide = Math.max(1.78 / (2 * tan * fracH), 2.0 / (2 * tan * camera.aspect * fracW));
+    // o nevoeiro começa logo atrás da vitrine principal (seja qual for a distância do plano geral)
+    scene.fog.near = L.dWide + 0.6; scene.fog.far = L.dWide + 7;
     L.rMul = narrow ? 1.2 : 1;
     camera.updateProjectionMatrix();
     stopKeys.length = 0;
@@ -351,7 +353,7 @@ export async function createStage({ canvas, video, mobile, piece }) {
     // cúpula: sobe na cena II
     const h = orbit ? easeIO(seg(p1, ORBIT.hood)) : 0;
     hood.position.y = h * 1.7; hood.visible = h < 0.999;
-    glass.opacity = 0.11 * seg(p0, OPEN.glass) * (1 - h);
+    glass.opacity = 0.07 * seg(p0, OPEN.glass) * (1 - h);
 
     // habitat → diorama
     const g = orbit ? 1 : seg(p0, OPEN.grade);
@@ -398,7 +400,14 @@ export async function createStage({ canvas, video, mobile, piece }) {
     renderer.render(scene, camera);
     const gl = renderer.getContext(), px = new Uint8Array(4);
     gl.readPixels(gl.drawingBufferWidth >> 1, gl.drawingBufferHeight >> 1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
-    return { calls: renderer.info.render.calls, tris: renderer.info.render.triangles, w: gl.drawingBufferWidth, h: gl.drawingBufferHeight, px: Array.from(px), video: video.readyState, map: panelMat.map === vtex ? "video" : "poster", cam: camera.position.toArray().map((v) => +v.toFixed(2)) };
+    let vavg = -1;
+    try {
+      const c2 = document.createElement("canvas"); c2.width = 16; c2.height = 9;
+      const g2 = c2.getContext("2d"); g2.drawImage(video, 0, 0, 16, 9);
+      const d = g2.getImageData(0, 0, 16, 9).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += (d[i] + d[i + 1] + d[i + 2]) / 3;
+      vavg = Math.round(s / (d.length / 4));
+    } catch (e) { /* sem acesso */ }
+    return { calls: renderer.info.render.calls, tris: renderer.info.render.triangles, w: gl.drawingBufferWidth, h: gl.drawingBufferHeight, px: Array.from(px), video: video.readyState, vt: +video.currentTime.toFixed(1), vavg, ready: +grade.uReady.value.toFixed(2), map: panelMat.map === vtex ? "video" : "poster", cam: camera.position.toArray().map((v) => +v.toFixed(2)) };
   }
 
   // compila os shaders antes de mostrar (evita um engasgo no primeiro scroll)

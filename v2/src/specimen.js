@@ -20,11 +20,23 @@ export const MODEL_URL = null;
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
 
 function latheBody(scale = 1) {
-  // perfil (raio, altura) de um corpo de coruja, de baixo para cima
-  const prof = [[0.0, 0.205], [0.06, 0.215], [0.115, 0.25], [0.148, 0.31], [0.16, 0.38], [0.156, 0.45], [0.14, 0.51], [0.115, 0.56], [0.09, 0.595], [0.0, 0.61]];
-  const pts = prof.map(([r, y]) => new THREE.Vector2(r * scale, 0.205 + (y - 0.205) * scale));
-  const g = new THREE.LatheGeometry(pts, 48);
+  // perfil (raio, altura) de um corpo de coruja-das-torres, de baixo para cima, alisado por uma curva
+  const prof = [[0.0, 0.2], [0.05, 0.205], [0.1, 0.228], [0.132, 0.278], [0.146, 0.34], [0.147, 0.4], [0.138, 0.46], [0.122, 0.51], [0.105, 0.55], [0.085, 0.58], [0.0, 0.6]];
+  const ctrl = prof.map(([r, y]) => new THREE.Vector2(r * scale, 0.2 + (y - 0.2) * scale));
+  const g = new THREE.LatheGeometry(new THREE.SplineCurve(ctrl).getPoints(40), 64);
   g.scale(1, 1, 0.86);
+  g.computeVertexNormals();
+  return g;
+}
+
+/* asa dobrada: elipsoide que afina para baixo, como a ponta das penas de voo */
+function wingGeometry() {
+  const g = new THREE.SphereGeometry(1, 32, 24);
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const y = p.getY(i), k = y < 0 ? 1 + y * 0.75 : 1 - y * y * 0.15;
+    p.setX(i, p.getX(i) * k); p.setZ(i, p.getZ(i) * k);
+  }
   g.computeVertexNormals();
   return g;
 }
@@ -47,10 +59,12 @@ export function buildPlaceholder({ name, sci, mobile }) {
   // ---------- materiais
   const wood = new THREE.MeshStandardMaterial({ map: woodTexture(), color: 0xffffff, roughness: 0.55, metalness: 0 });
   const bark = new THREE.MeshStandardMaterial({ map: barkTexture(), roughness: 0.95 });
-  const featherGold = new THREE.MeshStandardMaterial({ map: featherTexture({ seed: 3 }), roughness: 0.8, metalness: 0 });
-  const featherPale = new THREE.MeshStandardMaterial({ map: featherTexture({ base: "#ece0c6", edge: "#cdb58e", light: "#fbf4e4", fleck: "#8a7e70", rows: 18, seed: 9 }), roughness: 0.85 });
-  const face = new THREE.MeshStandardMaterial({ color: 0xf3eadb, roughness: 0.9 });
-  const faceRim = new THREE.MeshStandardMaterial({ color: 0xb88a52, roughness: 0.85 });
+  // dorso e asas dourados com salpicos cinzentos; peito claro com pintas finas (coruja-das-torres)
+  const featherGold = new THREE.MeshStandardMaterial({ map: featherTexture({ base: "#c9a066", edge: "#a47a47", light: "#e2c28d", fleck: "#6f6c68", rows: 22, seed: 3, repeat: [2, 2] }), roughness: 0.82 });
+  const featherPale = new THREE.MeshStandardMaterial({ map: featherTexture({ base: "#eee4d0", edge: "#dccdb1", light: "#faf5ea", fleck: "#6e655b", rows: 26, seed: 9, repeat: [3, 3] }), roughness: 0.88 });
+  const face = new THREE.MeshStandardMaterial({ color: 0xece1cc, roughness: 0.9 });
+  const ridge = new THREE.MeshStandardMaterial({ color: 0xdccbb0, roughness: 0.85 });
+  const faceRim = new THREE.MeshStandardMaterial({ color: 0xa87a46, roughness: 0.85 });
   const keratin = new THREE.MeshStandardMaterial({ color: 0xd9c9a8, roughness: 0.45 });
   const claw = new THREE.MeshStandardMaterial({ color: 0x2a221b, roughness: 0.35 });
   const clay = new THREE.MeshStandardMaterial({ color: 0xb9a58a, roughness: 0.9 });
@@ -90,17 +104,21 @@ export function buildPlaceholder({ name, sci, mobile }) {
   // ---------- Peca_Pele: penas, cabeça, disco facial, bico, asas, cauda, garras
   const skin = new THREE.Group(); skin.name = "Peca_Pele";
   const torso = new THREE.Mesh(latheBody(1), featherPale); skin.add(torso);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.112, 40, 30), featherGold);
-  head.scale.set(1, 0.92, 0.88); head.position.set(0, 0.67, 0.0); skin.add(head);
-  const discGeo = new THREE.ExtrudeGeometry(heartShape(), { depth: 0.012, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.006, bevelSegments: 3, curveSegments: 32 });
-  const disc = new THREE.Mesh(discGeo, face); disc.position.set(0, 0.665, 0.088); disc.rotation.x = -0.08; skin.add(disc);
-  const rim = new THREE.Mesh(new THREE.ExtrudeGeometry(heartShape(), { depth: 0.006, bevelEnabled: false, curveSegments: 32 }), faceRim);
-  rim.scale.setScalar(1.08); rim.position.set(0, 0.665, 0.084); rim.rotation.x = -0.08; skin.add(rim);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.122, 48, 36), featherGold);
+  head.scale.set(1.06, 0.88, 0.84); head.position.set(0, 0.665, -0.005); skin.add(head);
+  const discGeo = new THREE.ExtrudeGeometry(heartShape(), { depth: 0.012, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.006, bevelSegments: 4, curveSegments: 40 });
+  const disc = new THREE.Mesh(discGeo, face); disc.scale.setScalar(1.05); disc.position.set(0, 0.665, 0.086); disc.rotation.x = -0.08; skin.add(disc);
+  const rim = new THREE.Mesh(new THREE.ExtrudeGeometry(heartShape(), { depth: 0.006, bevelEnabled: false, curveSegments: 40 }), faceRim);
+  rim.scale.setScalar(1.11); rim.position.set(0, 0.665, 0.082); rim.rotation.x = -0.08; skin.add(rim);
+  // crista ao meio do disco facial, dos olhos até ao bico
+  const crest = new THREE.Mesh(new THREE.CapsuleGeometry(0.0065, 0.045, 6, 12), ridge);
+  crest.position.set(0, 0.676, 0.107); crest.rotation.x = -0.08; skin.add(crest);
   const beak = new THREE.Mesh(new THREE.ConeGeometry(0.011, 0.04, 12), keratin);
   beak.position.set(0, 0.645, 0.112); beak.rotation.x = Math.PI - 0.55; skin.add(beak);
+  const wingGeo = wingGeometry();
   for (const s of [-1, 1]) {
-    const wing = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 20), featherGold);
-    wing.scale.set(0.05, 0.2, 0.125); wing.position.set(0.128 * s, 0.4, -0.025); wing.rotation.set(0.12, 0.18 * s, -0.08 * s); skin.add(wing);
+    const wing = new THREE.Mesh(wingGeo, featherGold);
+    wing.scale.set(0.042, 0.21, 0.125); wing.position.set(0.118 * s, 0.37, -0.035); wing.rotation.set(0.2, 0.3 * s, -0.05 * s); skin.add(wing);
     // garras: três dedos sobre o ramo
     for (let k = 0; k < 3; k++) {
       const toe = new THREE.Mesh(new THREE.ConeGeometry(0.007, 0.045, 8), claw);
@@ -121,7 +139,7 @@ export function buildPlaceholder({ name, sci, mobile }) {
   }
 
   // ---------- pontos das notas (por ordem do gallery-data.js: disco facial, voo, garras, etiqueta)
-  [V(0, 0.69, 0.12), V(0.17, 0.42, 0.0), V(0.03, 0.225, 0.05), V(-0.05, 0.03, 0.235)].forEach((p, i) => {
+  [V(0, 0.69, 0.12), V(0.162, 0.42, -0.02), V(0.03, 0.225, 0.05), V(-0.05, 0.03, 0.235)].forEach((p, i) => {
     const o = new THREE.Object3D(); o.name = `Nota_${i + 1}`; o.position.copy(p); root.add(o);
   });
 
