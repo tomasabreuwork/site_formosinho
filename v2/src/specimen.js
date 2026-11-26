@@ -107,16 +107,11 @@ export function buildPlaceholder({ name, sci, mobile }) {
   const torso = new THREE.Mesh(latheBody(1), featherPale); torso.position.y = LIFT; skin.add(torso);
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.122, 48, 36), featherGold);
   head.scale.set(1.06, 0.88, 0.84); head.position.set(0, 0.665 + LIFT, -0.005); skin.add(head);
-  // disco facial: coração com rebordo arredondado e curvo, a envolver a cabeça
-  const bend = (geo, k) => {
-    const p = geo.attributes.position;
-    for (let i = 0; i < p.count; i++) p.setZ(i, p.getZ(i) - k * p.getX(i) * p.getX(i) - k * 0.35 * Math.max(0, p.getY(i)) ** 2);
-    geo.computeVertexNormals(); return geo;
-  };
-  const discGeo = bend(new THREE.ExtrudeGeometry(heartShape(), { depth: 0.01, bevelEnabled: true, bevelThickness: 0.011, bevelSize: 0.01, bevelSegments: 6, curveSegments: 48 }), 2.6);
-  const disc = new THREE.Mesh(discGeo, face); disc.scale.setScalar(1.04); disc.position.set(0, 0.665 + LIFT, 0.084); disc.rotation.x = -0.08; skin.add(disc);
-  const rimGeo = bend(new THREE.ExtrudeGeometry(heartShape(), { depth: 0.006, bevelEnabled: true, bevelThickness: 0.004, bevelSize: 0.004, bevelSegments: 3, curveSegments: 48 }), 2.6);
-  const rim = new THREE.Mesh(rimGeo, faceRim); rim.scale.setScalar(1.11); rim.position.set(0, 0.665 + LIFT, 0.08); rim.rotation.x = -0.08; skin.add(rim);
+  // disco facial: coração com rebordo arredondado
+  const discGeo = new THREE.ExtrudeGeometry(heartShape(), { depth: 0.008, bevelEnabled: true, bevelThickness: 0.009, bevelSize: 0.009, bevelSegments: 6, curveSegments: 48 });
+  const disc = new THREE.Mesh(discGeo, face); disc.scale.setScalar(1.02); disc.position.set(0, 0.665 + LIFT, 0.088); disc.rotation.x = -0.08; skin.add(disc);
+  const rimGeo = new THREE.ExtrudeGeometry(heartShape(), { depth: 0.006, bevelEnabled: true, bevelThickness: 0.004, bevelSize: 0.004, bevelSegments: 3, curveSegments: 48 });
+  const rim = new THREE.Mesh(rimGeo, faceRim); rim.scale.setScalar(1.1); rim.position.set(0, 0.665 + LIFT, 0.083); rim.rotation.x = -0.08; skin.add(rim);
   // crista ao meio do disco facial, dos olhos até ao bico
   const crest = new THREE.Mesh(new THREE.CapsuleGeometry(0.0065, 0.045, 6, 12), ridge);
   crest.position.set(0, 0.676 + LIFT, 0.107); crest.rotation.x = -0.08; skin.add(crest);
