@@ -125,6 +125,10 @@ em { font-style: italic; }
 .bar__now { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; display: flex; gap: 0.8rem; align-items: baseline; }
 .bar__now-num { color: var(--red); font-weight: 500; }
 .bar[data-theme="dark"] .bar__now-num { color: var(--brass); }
+/* lado direito da barra: botão V2 + índice */
+.bar__end { justify-self: end; display: flex; align-items: center; gap: 1.4rem; }
+.bar__v2 { font-family: var(--mono); font-size: 0.66rem; font-weight: 500; letter-spacing: 0.12em; color: inherit; text-decoration: none; border: 1px solid currentColor; border-radius: 100px; padding: 0.32rem 0.75rem 0.3rem; opacity: 0.85; transition: opacity 0.3s, background 0.3s, color 0.3s; }
+.bar__v2:hover, .bar__v2:focus-visible { opacity: 1; background: var(--brass); border-color: var(--brass); color: var(--night); }
 .bar__index { justify-self: end; display: flex; align-items: center; gap: 0.8rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.5rem 0; }
 .bar__index-icon { display: grid; gap: 4px; width: 22px; }
 .bar__index-icon i { display: block; height: 1px; background: currentColor; transition: transform 0.5s var(--ease), opacity 0.3s; }
@@ -821,6 +825,8 @@ body.has-promo .colophon { padding-bottom: calc(2.5rem + 52px); }
   .bar.is-solid { padding-top: 0.45rem; padding-bottom: 0.45rem; }
   .bar__brand { display: none; }
   .bar__index { justify-self: center; }
+  .bar__end { justify-self: center; }
+  .bar__v2 { position: absolute; right: var(--gut); top: 50%; transform: translateY(-50%); }
   .hero { height: 190vh; }
   .ledger-preview { display: none; }
 

@@ -18,8 +18,8 @@
   <link rel="preload" href="fonts/cormorant-garamond-italic-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="css/fonts.css?v=2026-11-26b" />
-  <link rel="stylesheet" href="css/style.css?v=2026-11-26b" />
+  <link rel="stylesheet" href="css/fonts.css?v=2026-11-26c" />
+  <link rel="stylesheet" href="css/style.css?v=2026-11-26c" />
   <noscript><style>.loader { display: none !important; } html.is-loading, html.is-loading body { overflow: auto !important; }</style></noscript>
 </head>
 <body>
@@ -42,10 +42,14 @@
       <span class="bar__sub">taxidermia &amp; história natural</span>
     </a>
     <p class="bar__now" aria-live="polite"><span class="bar__now-label">Formosinho</span></p>
-    <button class="bar__index" aria-expanded="false" aria-controls="indice">
-      <span class="bar__index-text">Índice</span>
-      <span class="bar__index-icon" aria-hidden="true"><i></i><i></i><i></i></span>
-    </button>
+    <div class="bar__end">
+      <!-- versão 2 (experimental), publicada em /v2/ -->
+      <a class="bar__v2" href="v2/" title="Ver a versão 2 do site (experimental)">V2</a>
+      <button class="bar__index" aria-expanded="false" aria-controls="indice">
+        <span class="bar__index-text">Índice</span>
+        <span class="bar__index-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+    </div>
   </header>
 
   <!-- Régua lateral (progresso de leitura) -->
@@ -409,7 +413,7 @@
   </aside>
   <a class="cta-mobile" href="#encomendas"><span>Encomende já a sua</span><i aria-hidden="true">→</i></a>
 
-  <script src="js/gallery-data.js?v=2026-11-26b"></script>
-  <script src="js/main.js?v=2026-11-26b"></script>
+  <script src="js/gallery-data.js?v=2026-11-26c"></script>
+  <script src="js/main.js?v=2026-11-26c"></script>
 </body>
 </html>
