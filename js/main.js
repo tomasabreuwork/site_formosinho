@@ -382,12 +382,8 @@
   /* =====================================================================
      II · MÉTODO
      ===================================================================== */
-  const figsBox = $("#methodFigs"), stepsBox = $("#methodSteps"), ghostsBox = $("#methodGhosts");
+  const figsBox = $("#methodFigs"), stepsBox = $("#methodSteps");
   STEPS.forEach((s, i) => {
-    const g = document.createElement("span");
-    g.className = "plate__ghost"; g.textContent = s.title;
-    ghostsBox.appendChild(g);
-
     const fig = document.createElement("div");
     fig.className = "plate__fig-img" + (i === 0 ? " is-on" : "");
     fig.innerHTML = `<img src="${esc(s.src)}" alt="${esc(s.title)}" loading="lazy" data-ph="${esc(s.title)}">`;
@@ -403,17 +399,16 @@
       <p class="step__time">${esc(s.time || "")}</p>`;
     stepsBox.appendChild(li);
   });
-  const figs = $$(".plate__fig-img"), steps = $$(".step"), ghosts = $$(".plate__ghost");
-  const figImgs = figs.map((f) => f.querySelector("img"));
-  const SCRUB = !RM && STEPS.length > 0;
-  if (SCRUB) $("#metodo").classList.add("is-scrub");
-  const DESK = matchMedia("(min-width: 821px)");
-  const smooth = (t) => t * t * (3 - 2 * t);
-  const figLabel = $(".plate__fig"), methodRule = $(".method__rule span"), methodSec = $("#metodo");
+  const figs = $$(".plate__fig-img"), steps = $$(".step");
+  // parallax suave: só a imagem desliza devagar dentro da moldura; o texto fica quieto
+  const DRIFT = !RM && STEPS.length > 0;
+  if (DRIFT) $("#metodo").classList.add("is-drift");
+  const figLabel = $(".plate__fig"), methodRule = $(".method__rule span"), methodSec = $("#metodo"), plateBox = $(".plate__figs");
+  const mobileImgs = $$(".step__mobile-img");
   let curStep = 0;
   const setStep = (i) => {
     if (i === curStep) return;
-    if (!SCRUB) figs.forEach((f, k) => { f.classList.remove("was-on"); if (k === curStep) f.classList.add("was-on"); f.classList.toggle("is-on", k === i); });
+    figs.forEach((f, k) => { f.classList.remove("was-on"); if (k === curStep) f.classList.add("was-on"); f.classList.toggle("is-on", k === i); });
     steps.forEach((s, k) => s.classList.toggle("is-active", k === i));
     figLabel.textContent = STEPS[i].title;
     curStep = i;
@@ -426,37 +421,14 @@
     if (r.bottom < 0 || r.top > vh) return;
     const p = clamp((vh * 0.5 - r.top) / r.height, 0, 1);
     methodRule.style.height = p * 100 + "%";
-    if (!SCRUB) return;
-
-    // posição contínua: 2.4 = 40% do caminho entre o passo 3 e o passo 4
-    const mid = vh / 2;
-    const c = steps.map((s) => { const b = s.getBoundingClientRect(); return b.top + b.height / 2; });
-    let pos = 0;
-    if (mid >= c[c.length - 1]) pos = c.length - 1;
-    else for (let k = 0; k < c.length - 1; k++) {
-      if (mid >= c[k] && mid < c[k + 1]) { pos = k + (mid - c[k]) / (c[k + 1] - c[k]); break; }
-    }
-
-    // texto de cada passo: cada linha anda a uma velocidade diferente
-    steps.forEach((s, k) => {
-      const d = clamp((c[k] - mid) / vh, -1.2, 1.2);
-      s.style.setProperty("--d", d.toFixed(3));
-      s.style.setProperty("--o", (1 - Math.min(1, Math.abs(d) * 1.7) * 0.74).toFixed(3));
-    });
-    if (!DESK.matches) return;
-
-    // prancha: a figura seguinte sobe por baixo da anterior, enquanto ambas deslizam
-    figs.forEach((f, k) => {
-      const rev = k === 0 ? 1 : smooth(clamp((pos - (k - 1) - 0.4) / 0.6, 0, 1));
-      f.style.zIndex = k + 1;
-      f.style.clipPath = `inset(${((1 - rev) * 100).toFixed(2)}% 0 0 0)`;
-      figImgs[k].style.transform = `translate3d(0, ${(clamp(pos - k, -1, 1) * -6).toFixed(2)}%, 0) scale(${(1.14 + (1 - rev) * 0.14).toFixed(3)})`;
-    });
-    // título fantasma: entra por baixo e sai por cima, mais depressa do que a imagem
-    ghosts.forEach((g, k) => {
-      const d = pos - k;
-      g.style.opacity = clamp(1 - Math.abs(d) * 1.8, 0, 1).toFixed(3);
-      g.style.transform = `translate3d(${(d * -4).toFixed(2)}%, ${(d * -140).toFixed(1)}%, 0)`;
+    if (!DRIFT) return;
+    // -1 (secção a entrar) … 1 (a sair): a imagem desce devagar dentro da moldura
+    plateBox.style.setProperty("--py", ((p - 0.5) * 2).toFixed(3));
+    // telemóvel: cada imagem desliza dentro da sua moldura enquanto passa no ecrã
+    mobileImgs.forEach((m) => {
+      const b = m.getBoundingClientRect();
+      if (b.bottom < 0 || b.top > vh) return;
+      m.style.setProperty("--py", clamp((b.top + b.height / 2 - vh / 2) / vh, -1, 1).toFixed(3));
     });
   }
 
@@ -882,8 +854,18 @@
           api.start();
           api.addEventListener("viewerready", () => {
             if (my !== token) return;
-            caseEl.classList.add("is-live");
-            addNotes(api, MODELS[i].notes || []);
+            api.getCameraLookAt((err, cam) => {
+              if (my !== token) return;
+              const live = () => { if (my === token) caseEl.classList.add("is-live"); };
+              if (err || !cam) { live(); return; }
+              addNotes(api, MODELS[i].notes || [], cam);
+              // afasta a câmara (mesmo ângulo) para o animal caber inteiro dentro da moldura;
+              // quem quiser ver de perto aproxima com pinça ou duplo clique
+              const k = MODELS[i].distance ?? T.distance ?? 1.6;
+              const pos = cam.position.map((v, j) => cam.target[j] + (v - cam.target[j]) * k);
+              api.setCameraLookAt(pos, cam.target, 0, live);
+              setTimeout(live, 800); // salvaguarda se a função não devolver resposta
+            });
           });
         },
         error: () => { if (my === token) caseEl.classList.remove("is-live"); },
@@ -891,10 +873,9 @@
     }
 
     // pontos de informação em português (substituem os do autor do modelo)
-    function addNotes(api, notes) {
+    function addNotes(api, notes, cam) {
       if (!notes.length) return;
-      api.getCameraLookAt((err, cam) => {
-        if (err || !cam) return;
+      {
         const dir = cam.position.map((v, k) => v - cam.target[k]);
         const next = (k) => {
           if (k >= notes.length) return;
@@ -906,7 +887,7 @@
         const go = () => { if (!started) { started = true; next(0); } };
         try { api.removeAllAnnotations(go); } catch (e) { /* sem anotações */ }
         setTimeout(go, 600); // salvaguarda se a função não devolver resposta
-      });
+      }
     }
 
     fill(0); cur = 0; pending = 0;

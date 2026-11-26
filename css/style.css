@@ -62,12 +62,8 @@ html.is-loading, html.is-loading body { overflow: hidden; }
 .loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
 .loader__inner { width: min(78vw, 420px); text-align: center; transition: transform 0.9s var(--ease); }
 .loader.is-done .loader__inner { transform: translateY(-14px); }
-.loader__kicker {
-  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase;
-  color: rgba(235, 229, 215, 0.55);
-}
 .loader__mark {
-  margin: 0.5rem 0 1.6rem; font-family: var(--serif); font-weight: 400; line-height: 1;
+  margin: 0 0 1.6rem; font-family: var(--serif); font-weight: 400; line-height: 1;
   font-size: clamp(2.6rem, 9vw, 4.4rem); letter-spacing: -0.01em;
   animation: loader-breathe 2.4s ease-in-out infinite alternate;
 }
@@ -78,12 +74,6 @@ html.is-loading, html.is-loading body { overflow: hidden; }
   position: absolute; inset: 0; background: var(--brass);
   transform-origin: 0 50%; transform: scaleX(var(--p, 0)); transition: transform 0.35s linear;
 }
-.loader__meta {
-  display: flex; justify-content: space-between; margin-top: 0.8rem;
-  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(235, 229, 215, 0.55);
-}
-.loader__pct { font-variant-numeric: tabular-nums; color: var(--bone); }
 @media (prefers-reduced-motion: reduce) {
   .loader__mark { animation: none; }
   .loader, .loader__inner, .loader__fill { transition-duration: 0.01s; }
@@ -306,10 +296,12 @@ em { font-style: italic; }
 /* =========================================================================
    I · O GABINETE
    ========================================================================= */
-.about__grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0 clamp(1rem, 2vw, 2rem); }
-.about__text { grid-column: 1 / span 7; }
+/* 2 linhas: texto em cima e números em baixo, na coluna da esquerda; a fotografia ocupa as duas
+   à direita. "auto 1fr" faz com que a altura da fotografia não empurre os números para baixo. */
+.about__grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: auto 1fr; gap: 0 clamp(1rem, 2vw, 2rem); }
+.about__text { grid-column: 1 / span 7; grid-row: 1; }
 .about__text > p:not(.lead) { color: var(--ink-2); max-width: 58ch; margin-bottom: 1.1rem; }
-.about__side { grid-column: 9 / span 4; padding-top: 1rem; }
+.about__side { grid-column: 9 / span 4; grid-row: 1 / span 2; padding-top: 1rem; }
 .signature { width: min(420px, 90%); margin-top: 2.5rem; overflow: visible; }
 .signature text { font-family: var(--serif); font-style: italic; font-size: 92px; fill: transparent; stroke: var(--ink); stroke-width: 0.9; stroke-dasharray: 900; stroke-dashoffset: var(--draw, 900); }
 
@@ -324,9 +316,10 @@ em { font-style: italic; }
 .notes li { position: relative; padding-left: 1.3rem; }
 .notes li::before { content: "✦"; position: absolute; left: 0; top: 0.1em; font-style: normal; font-size: 0.7rem; color: var(--red); }
 
-.spec { margin-top: clamp(4rem, 8vw, 7rem); display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--ink); }
+.spec { grid-column: 1 / span 7; grid-row: 2; align-self: start; margin-top: clamp(2.5rem, 4vw, 3.5rem); display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 1.6rem; border-top: 1px solid var(--ink); }
 .spec div { padding: 1.1rem 1rem 0 0; border-right: 1px solid var(--rule); margin-right: 1rem; }
-.spec div:last-child { border-right: 0; }
+.spec div:nth-child(3n), .spec div:last-child { border-right: 0; }
+.spec div:last-child { grid-column: span 2; }
 .spec dt { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
 .spec dd { font-family: var(--serif); font-size: clamp(1.4rem, 2.4vw, 2.2rem); line-height: 1.1; margin-top: 0.4rem; }
 
@@ -342,18 +335,11 @@ em { font-style: italic; }
 .plate__fig-img.was-on { clip-path: inset(0 0 0 0); z-index: 1; }
 .plate__fig-img img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.12) saturate(0.9); transform: scale(1.08); transition: transform 2.2s var(--ease); }
 .plate__fig-img.is-on img { transform: scale(1); }
-/* parallax contínuo (ligado ao scroll): as figuras sobem por baixo, a imagem desliza
-   dentro da moldura e o título fantasma passa por cima a outra velocidade */
+/* parallax suave: ao mudar de passo a imagem nova sobe por cima da anterior; durante o scroll
+   todas deslizam devagar dentro da moldura (--py vai de -1 a 1, posto pelo JS) */
 .plate { position: relative; }
-.method.is-scrub .plate__fig-img, .method.is-scrub .plate__fig-img img { transition: none; will-change: clip-path, transform; }
-.plate__ghosts { position: absolute; left: 0; right: 0; top: 0; bottom: 2.6rem; overflow: hidden; pointer-events: none; z-index: 20; }
-.plate__ghost {
-  position: absolute; left: clamp(1rem, 2vw, 1.8rem); bottom: clamp(0.8rem, 2vw, 1.6rem);
-  font-family: var(--serif); font-style: italic; font-weight: 300; line-height: 0.9;
-  font-size: clamp(3rem, 6.4vw, 6.6rem); color: var(--bone); letter-spacing: -0.02em;
-  text-shadow: 0 2px 30px rgba(15, 14, 12, 0.35); opacity: 0; will-change: transform, opacity;
-}
-.plate__ghosts::before { content: ""; position: absolute; inset: 45% 0 0; background: linear-gradient(to top, rgba(15, 14, 12, 0.45), transparent); }
+.method.is-drift .plate__fig-img img { transform: translate3d(0, calc(var(--py, 0) * 4%), 0) scale(1.18); }
+.method.is-drift .plate__fig-img.is-on img { transform: translate3d(0, calc(var(--py, 0) * 4%), 0) scale(1.1); }
 .plate__label { display: flex; justify-content: space-between; padding-top: 0.7rem; border-top: 1px solid var(--ink); margin-top: 0.7rem; font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; }
 .method__rule { width: 14px; position: relative; background: repeating-linear-gradient(to bottom, var(--ink-3) 0 1px, transparent 1px 10px); background-size: 6px 100%; background-repeat: no-repeat; }
 .method__rule span { position: absolute; left: 0; top: 0; width: 2px; height: 0; background: var(--red); }
@@ -367,13 +353,6 @@ em { font-style: italic; }
 .step__time { margin-top: 1.4rem; font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); display: flex; gap: 0.6rem; align-items: center; }
 .step__time::before { content: ""; width: 26px; height: 1px; background: var(--ink-3); }
 .step__mobile-img { display: none; }
-.method.is-scrub .step h3, .method.is-scrub .step p, .method.is-scrub .step__mobile-img img { will-change: transform; }
-.method.is-scrub .step h3 { transform: translate3d(0, calc(var(--d, 0) * 90px), 0); }
-.method.is-scrub .step p:not(.step__time) { transform: translate3d(0, calc(var(--d, 0) * 45px), 0); }
-.method.is-scrub .step__time { transform: translate3d(0, calc(var(--d, 0) * 20px), 0); }
-@media (min-width: 821px) {
-  .method.is-scrub .step { opacity: var(--o, 1); transition: none; }
-}
 
 /* =========================================================================
    III · CATÁLOGO
@@ -898,17 +877,18 @@ body.has-promo .colophon { padding-bottom: calc(2.5rem + 52px); }
   .chapter { grid-template-columns: 1fr; }
   .chapter__meta { grid-column: 1 / -1; order: 3; }
   .about__text, .about__side { grid-column: 1 / -1; }
-  .about__side { max-width: 420px; margin-top: 3rem; }
-  .spec { grid-template-columns: 1fr 1fr; }
+  .about__grid { grid-template-rows: none; }
+  .about__side { max-width: 420px; margin-top: 3rem; grid-row: auto; }
+  .spec { grid-template-columns: 1fr 1fr; grid-column: 1 / -1; grid-row: auto; margin-top: 3.5rem; }
+  .spec div:nth-child(3n) { border-right: 1px solid var(--rule); }
+  .spec div:nth-child(2n), .spec div:last-child { border-right: 0; }
 
   .method__plate { display: none; }
   .steps { grid-column: 1 / -1; }
   .step { min-height: 0; opacity: 1; padding: 2.5rem 0; }
   .step__mobile-img { display: block; aspect-ratio: 4 / 3; overflow: hidden; margin-bottom: 1.4rem; background: var(--paper-3); }
   .step__mobile-img img { width: 100%; height: 100%; object-fit: cover; }
-  .method.is-scrub .step__mobile-img img { transform: translate3d(0, calc(var(--d, 0) * -9%), 0) scale(1.2); }
-  .method.is-scrub .step h3 { transform: translate3d(0, calc(var(--d, 0) * 40px), 0); }
-  .method.is-scrub .step p:not(.step__time) { transform: translate3d(0, calc(var(--d, 0) * 20px), 0); }
+  .method.is-drift .step__mobile-img img { transform: translate3d(0, calc(var(--py, 0) * -7%), 0) scale(1.16); transition: none; }
 
   /* Vitrine em fila horizontal: uma peça de cada vez, desliza-se para o lado */
   .catalog__tools { margin-bottom: 1.6rem; }
@@ -988,6 +968,7 @@ body.has-promo .colophon { padding-bottom: calc(2.5rem + 52px); }
 @media (max-width: 520px) {
   .spec-item, .spec-item[class*=" s"] { flex-basis: 74vw; }
   .spec { grid-template-columns: 1fr; }
+  .spec div, .spec div:last-child { grid-column: auto; border-right: 0; }
   .colophon__grid { grid-template-columns: 1fr; }
   .slip__head { flex-direction: column; gap: 0.6rem; }
   .slip__no { text-align: left; }

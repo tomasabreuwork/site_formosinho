@@ -70,6 +70,9 @@ window.FORMOSINHO = {
      ----------------------------------------------------------------------- */
   turn3d: {
     autospin: 0.18,
+    /* distância da câmara ao abrir: 1 = como o autor do modelo deixou, 1.6 = 60% mais longe.
+       Cada peça pode ter a sua própria "distance" (ex.: distance: 1.8) */
+    distance: 1.6,
     /* notes: pontos de informação na peça (p = posição 3D na superfície do modelo) */
     models: [
       { name: "Veado", sci: "Odocoileus virginianus", mount: "Montagem de ombro",
