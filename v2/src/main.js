@@ -151,6 +151,11 @@ function runCinema() {
       requestAnimationFrame(() => html.classList.add("is-3d"));
       new ResizeObserver(() => stage.layout()).observe($(".stage__canvas"));
       if (qs.has("debug")) setInterval(() => { document.title = "DBG " + JSON.stringify(stage.probe()); }, 1000);
+      // ?snap: põe o fotograma 3D como imagem por cima do canvas (para capturas de revisão)
+      if (qs.has("snap")) setTimeout(() => {
+        const img = new Image(); img.className = "stage__snap"; img.alt = "";
+        img.src = stage.snap(); $(".stage__canvas").after(img);
+      }, 6000);
     } catch (e) {
       console.warn("[Formosinho v2] 3D indisponível:", e); // fica o vídeo e o texto
     }

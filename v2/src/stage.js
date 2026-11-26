@@ -404,5 +404,8 @@ export async function createStage({ canvas, video, mobile, piece }) {
   // compila os shaders antes de mostrar (evita um engasgo no primeiro scroll)
   renderer.compile(scene, camera);
 
-  return { update, project, layout, setActive, probe, renderer };
+  // fotograma do 3D como imagem (para capturas de revisão)
+  function snap() { renderer.render(scene, camera); return renderer.domElement.toDataURL("image/jpeg", 0.88); }
+
+  return { update, project, layout, setActive, probe, snap, renderer };
 }

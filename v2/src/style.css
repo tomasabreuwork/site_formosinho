@@ -68,6 +68,7 @@ a { color: inherit; }
 .stage__canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s var(--ease); }
 .is-3d .stage__canvas { opacity: 1; }
 .is-3d .stage__video { opacity: 0; } /* continua a tocar: é a textura do diorama */
+.stage__snap { position: absolute; inset: 0; width: 100%; height: 100%; }
 .stage__lines { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
 .leader { fill: none; stroke: var(--brass-2); stroke-width: 1; opacity: 0; transition: opacity 0.5s; }
 .leader__dot { fill: var(--brass-2); opacity: 0; transition: opacity 0.5s; }
