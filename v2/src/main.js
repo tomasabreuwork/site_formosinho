@@ -85,17 +85,25 @@ function runCinema() {
   gsap.ticker.add((t) => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
 
+  // Rever um momento exato: ?vh=250 abre nesse ponto do scroll (em % da altura do ecrã);
+  // ?cena=1&p=0.3 fixa a cena II a 30 % sem fazer scroll (pré-visualização / capturas).
+  const qs = new URLSearchParams(location.search);
+  const PREVIEW = qs.has("p") ? { s: parseInt(qs.get("cena") || "0", 10), p: clamp(parseFloat(qs.get("p")) || 0) } : null;
+
   // progresso de cada cena (0 → 1); a última termina quando o fundo chega ao fundo do ecrã
   const scenes = $$(".scene");
   const raw = scenes.map(() => 0), sm = scenes.map(() => 0);
   scenes.forEach((el, i) => ScrollTrigger.create({
     trigger: el, start: "top top", end: i === scenes.length - 1 ? "bottom bottom" : "bottom top",
-    onUpdate: (st) => { raw[i] = st.progress; }, onRefresh: (st) => { raw[i] = st.progress; },
+    onUpdate: (st) => { if (!PREVIEW) raw[i] = st.progress; }, onRefresh: (st) => { if (!PREVIEW) raw[i] = st.progress; },
   }));
 
-  // ?vh=250 abre a página nesse ponto do scroll (em % da altura do ecrã) — útil para rever uma cena
-  const jump = new URLSearchParams(location.search).get("vh");
-  if (jump) lenis.scrollTo((parseFloat(jump) || 0) * window.innerHeight / 100, { immediate: true, force: true });
+  if (qs.has("vh")) lenis.scrollTo((parseFloat(qs.get("vh")) || 0) * window.innerHeight / 100, { immediate: true, force: true });
+  if (PREVIEW) {
+    lenis.stop();
+    raw.forEach((_, i) => { raw[i] = i < PREVIEW.s ? 1 : i === PREVIEW.s ? PREVIEW.p : 0; sm[i] = raw[i]; });
+    html.classList.toggle("hide-opening", PREVIEW.s > 0 || PREVIEW.p > 0.25);
+  }
 
   const groups = scenes.map((s) => $$("[data-from]", s));
   const num = $(".nav__num"), label = $(".nav__label"), rule = $(".rule"), after = $("#depois");
